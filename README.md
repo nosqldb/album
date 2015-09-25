@@ -12,7 +12,7 @@ This repo is initially clone from [gopher](https://github.com/jimmykuu/gopher)
 - github.com/qiniu/rpc
 - github.com/qiniu/api.v6
 - labix.org/v2/mgo
-- code.google.com/p/go-uuid/uuid
+- github.com/pborman/uuid
 - github.com/jimmykuu/webhelpers
 - github.com/jimmykuu/wtforms
 - github.com/deferpanic/deferclient/deferclient
