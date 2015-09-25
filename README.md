@@ -19,7 +19,7 @@ This repo is initially clone from [gopher](https://github.com/jimmykuu/gopher)
 
 ##Install
 
-    $ go get github.com/jimmykuu/gopher/server
+    $ go get github.com/nosqldb/G/server
 
 
 copy *etc/config.json.default* to  *etc/config.json* as the configure file
