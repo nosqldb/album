@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
   <channel>
-    <title><![CDATA[golangtc.com - golang中国社区]]></title>
-    <link>https://golangtc.com/</link>
-    <description><![CDATA[golangtc.com - golang中国社区]]></description>
+    <title><![CDATA[nosqldb.org - NOSQL数据库社区]]></title>
+    <link>https://nosqldb.org/</link>
+    <description><![CDATA[nosqldb.org - NOSQL数据库社区]]></description>
     <lastBuildDate>{{formatdate .date}}</lastBuildDate>
     <pubDate>{{formatdate .date}}</pubDate>
     <language>zh-CN</language>
     <image>
-      <link>https://golangtc.com/</link>
-      <url>https://77fkk5.com1.z0.glb.clouddn.com/static/img/golang-china.png?v=14</url>
-      <title><![CDATA[golangtc - golang中国社区]]></title>
+      <link>https://nosqldb.org/</link>
+      <url>http://7fvflv.com1.z0.glb.clouddn.com/logo.png?v=14</url>
+      <title><![CDATA[nosqldb - NOSQL数据库社区]]></title>
     </image>
 	{{range $t := .topics }}
     <item>
