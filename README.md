@@ -68,7 +68,7 @@ Windows:
 
 or:
 
-	$ go build -o binary github.com/jimmykuu/gopher/server
+	$ go build -o binary github.com/nosqldb/G/server
 	$ ./binary
 
 ##Contributors
