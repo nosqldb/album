@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/jimmykuu/gopher"
+	"github.com/nosqldb/G"
 )
 
 func main() {
