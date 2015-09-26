@@ -484,7 +484,7 @@ func forgotPasswordHandler(handler *Handler) {
 
 如果这个请求不是由你发起的，那没问题，你不用担心，你可以安全地忽略这封邮件。
 
-如果你有任何疑问，可以回复<a href="mailto:support@golangtc.com">support@golangtc.com</a>向我提问。`
+如果你有任何疑问，可以回复<a href="mailto:nosqldb@163.com">nosqldb@163.com</a>向我提问。`
 				code := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"resetcode": code}})
 				message2 = fmt.Sprintf(message2, user.Username, Config.Host, code, Config.Host, code)
