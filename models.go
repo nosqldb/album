@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"html/template"
 	"time"
-
 	"github.com/gorilla/sessions"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -23,7 +22,6 @@ const (
 	DefaultAvatar = "gopher_teal.jpg"
 
 	ADS                 = "ads"
-	ARTICLE_CATEGORIES  = "articlecategories"
 	BOOKS               = "books"
 	COMMENTS            = "comments"
 	CONTENTS            = "contents"
@@ -490,29 +488,6 @@ type Site struct {
 	CategoryId bson.ObjectId
 }
 
-// 文章分类
-type ArticleCategory struct {
-	Id_  bson.ObjectId `bson:"_id"`
-	Name string
-}
-
-// 文章
-type Article struct {
-	Content
-	Id_            bson.ObjectId `bson:"_id"`
-	CategoryId     bson.ObjectId
-	OriginalSource string
-	OriginalUrl    string
-}
-
-// 主题所属类型
-func (a *Article) Category(db *mgo.Database) *ArticleCategory {
-	c := db.C("articlecategories")
-	category := ArticleCategory{}
-	c.Find(bson.M{"_id": a.CategoryId}).One(&category)
-
-	return &category
-}
 
 // 评论
 type Comment struct {

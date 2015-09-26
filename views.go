@@ -12,7 +12,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-
 	"github.com/pborman/uuid"
 	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
@@ -153,11 +152,6 @@ func (u *Utils) AssertNode(i interface{}) *Node {
 
 func (u *Utils) AssertTopic(i interface{}) *Topic {
 	v, _ := i.(Topic)
-	return &v
-}
-
-func (u *Utils) AssertArticle(i interface{}) *Article {
-	v, _ := i.(Article)
 	return &v
 }
 
