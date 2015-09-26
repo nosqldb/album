@@ -23,7 +23,7 @@ const (
 	COMMENTS            = "comments"
 	TOPICS              = "topics"
 	NODES               = "nodes"
-	LINK_EXCHANGES      = "link_exchanges"
+	LINKS               = "links"
 	SITE_CATEGORIES     = "sitecategories"
 	SITES               = "sites"
 	STATUS              = "status"
@@ -458,7 +458,7 @@ func (c *Comment) Topic(db *mgo.Database) *Topic {
 	return &topic
 }
 
-type LinkExchange struct {
+type Link struct {
 	Id_         bson.ObjectId `bson:"_id"`
 	Name        string        `bson:"name"`
 	URL         string        `bson:"url"`

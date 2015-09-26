@@ -72,8 +72,8 @@ func (handler *Handler) renderTemplate(file, baseFile string, datas ...map[strin
 	data["db"] = handler.DB
 	data["host"] = Config.Host
 
-	var linksOnBottom []LinkExchange
-	c := handler.DB.C(LINK_EXCHANGES)
+	var linksOnBottom []Link
+	c := handler.DB.C(LINKS)
 	c.Find(bson.M{"is_on_bottom": true}).All(&linksOnBottom)
 
 	data["linksOnBottom"] = linksOnBottom

@@ -8,19 +8,19 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// URL: /admin/link_exchanges
+// URL: /admin/links
 // 友情链接列表
 func adminListLinkExchangesHandler(handler *Handler) {
-	c := handler.DB.C(LINK_EXCHANGES)
-	var linkExchanges []LinkExchange
+	c := handler.DB.C(LINKS)
+	var linkExchanges []Link
 	c.Find(nil).All(&linkExchanges)
 
-	handler.renderTemplate("admin/link_exchanges.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("admin/links.html", ADMIN, map[string]interface{}{
 		"linkExchanges": linkExchanges,
 	})
 }
 
-// ULR: /admin/link_exchange/new
+// ULR: /admin/link/new
 // 增加友链
 func adminNewLinkExchangeHandler(handler *Handler) {
 	defer dps.Persist()
@@ -34,27 +34,27 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
+			handler.renderTemplate("links/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": true,
 			})
 			return
 		}
 
-		c := handler.DB.C(LINK_EXCHANGES)
-		var linkExchange LinkExchange
+		c := handler.DB.C(LINKS)
+		var linkExchange Link
 		err := c.Find(bson.M{"url": form.Value("url")}).One(&linkExchange)
 
 		if err == nil {
 			form.AddError("url", "该URL已经有了")
-			handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
+			handler.renderTemplate("links/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": true,
 			})
 			return
 		}
 
-		err = c.Insert(&LinkExchange{
+		err = c.Insert(&Link{
 			Id_:         bson.NewObjectId(),
 			Name:        form.Value("name"),
 			URL:         form.Value("url"),
@@ -68,25 +68,25 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 			panic(err)
 		}
 
-		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/link_exchanges", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/links", http.StatusFound)
 		return
 	}
 
-	handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("links/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": true,
 	})
 }
 
-// URL: /admin/link_exchange/{linkExchangeId}/edit
+// URL: /admin/link/{linkExchangeId}/edit
 // 编辑友情链接
 func adminEditLinkExchangeHandler(handler *Handler) {
 	defer dps.Persist()
 
 	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
 
-	c := handler.DB.C(LINK_EXCHANGES)
-	var linkExchange LinkExchange
+	c := handler.DB.C(LINKS)
+	var linkExchange Link
 	c.Find(bson.M{"_id": bson.ObjectIdHex(linkExchangeId)}).One(&linkExchange)
 
 	form := wtforms.NewForm(
@@ -98,7 +98,7 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
+			handler.renderTemplate("links/form.html", ADMIN, map[string]interface{}{
 				"linkExchange": linkExchange,
 				"form":         form,
 				"isNew":        false,
@@ -119,23 +119,23 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 			panic(err)
 		}
 
-		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/link_exchanges", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/links", http.StatusFound)
 		return
 	}
 
-	handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("links/form.html", ADMIN, map[string]interface{}{
 		"linkExchange": linkExchange,
 		"form":         form,
 		"isNew":        false,
 	})
 }
 
-// URL: /admin/link_exchange/{linkExchangeId}/delete
+// URL: /admin/link/{linkExchangeId}/delete
 // 删除友情链接
 func adminDeleteLinkExchangeHandler(handler *Handler) {
 	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
 
-	c := handler.DB.C(LINK_EXCHANGES)
+	c := handler.DB.C(LINKS)
 	c.RemoveId(bson.ObjectIdHex(linkExchangeId))
 
 	handler.ResponseWriter.Write([]byte("true"))
@@ -144,10 +144,10 @@ func adminDeleteLinkExchangeHandler(handler *Handler) {
 // URL: /link
 // 友情链接
 func linksHandler(handler *Handler) {
-	var links []LinkExchange
-	c := handler.DB.C(LINK_EXCHANGES)
+	var links []Link
+	c := handler.DB.C(LINKS)
 	c.Find(nil).All(&links)
-	handler.renderTemplate("link_exchange/all.html", BASE, map[string]interface{}{
+	handler.renderTemplate("links/all.html", BASE, map[string]interface{}{
 		"links": links,
 	})
 }
