@@ -195,7 +195,7 @@ func newTopicHandler(handler *Handler) {
 
 			c.Update(nil, bson.M{"$inc": bson.M{"topiccount": 1}})
 
-			http.Redirect(handler.ResponseWriter, handler.Request, "/t/"+id_.Hex(), http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/p/"+id_.Hex(), http.StatusFound)
 			return
 		}
 	}
@@ -208,7 +208,7 @@ func newTopicHandler(handler *Handler) {
 	})
 }
 
-// URL: /t/{topicId}/edit
+// URL: /p/{topicId}/edit
 // 编辑主题
 func editTopicHandler(handler *Handler) {
 	user, _ := currentUser(handler)
@@ -266,7 +266,7 @@ func editTopicHandler(handler *Handler) {
 				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 			}
 
-			http.Redirect(handler.ResponseWriter, handler.Request, "/t/"+topic.Id_.Hex(), http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/p/"+topic.Id_.Hex(), http.StatusFound)
 			return
 		}
 	}
@@ -274,12 +274,12 @@ func editTopicHandler(handler *Handler) {
 	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑",
-		"action": "/t/" + topicId + "/edit",
+		"action": "/p/" + topicId + "/edit",
 		"active": "topic",
 	})
 }
 
-// URL: /t/{topicId}
+// URL: /p/{topicId}
 // 根据主题的ID,显示主题的信息及回复
 func showTopicHandler(handler *Handler) {
 	testParam()
@@ -400,7 +400,7 @@ func topicInNodeHandler(handler *Handler) {
 	})
 }
 
-// URL: /t/{topicId}/collect/
+// URL: /p/{topicId}/collect/
 // 将主题收藏至当前用户的收藏夹
 func collectTopicHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
@@ -418,7 +418,7 @@ func collectTopicHandler(handler *Handler) {
 	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect?p=1", http.StatusFound)
 }
 
-// URL: /t/{topicId}/delete
+// URL: /p/{topicId}/delete
 // 删除主题
 func deleteTopicHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
@@ -472,7 +472,7 @@ func setTopTopicHandler(handler *Handler) {
 	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["id"])
 	c := handler.DB.C(TOPICS)
 	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": true}})
-	handler.Redirect("/t/" + topicId.Hex())
+	handler.Redirect("/p/" + topicId.Hex())
 }
 
 // 取消置顶

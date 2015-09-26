@@ -18,7 +18,7 @@
 		<dl class="replies">
 		{{range .comments}}
 			<dd>
-			<a href="/t/{{.ContentId}}"  >{{.TopicTitle}}</a><br>
+			<a href="/p/{{.TopicId}}"  >{{.TopicTitle}}</a><br>
 			</dd>
 		{{end}}
 		</dl>
@@ -35,13 +35,13 @@
 		{{if eq .user.Username .username}}
 		{{range .ats}}
 			<dd>
-			<a href="/t/{{.ContentId}}#{{.CommentId}}">{{.User}}AT了你</a><br>
+			<a href="/p/{{.TopicId}}#{{.CommentId}}">{{.User}}AT了你</a><br>
 			</dd>
 		{{end}}
 		{{else}}
 		{{range .ats}}
 			<dd>
-			<a href="/t/{{.ContentId}}#{{.CommentId}}">{{.User}}AT了他</a><br>
+			<a href="/p/{{.TopicId}}#{{.CommentId}}">{{.User}}AT了他</a><br>
 			</dd>
 		{{end}}
 		{{end}}

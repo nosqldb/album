@@ -27,7 +27,7 @@ func commentHandler(handler *Handler) {
 	var contentCreator bson.ObjectId
 	contentCreator = temp["createdby"].(bson.ObjectId)
 
-	url := "/t/" + topicIdStr
+	url := "/p/" + topicIdStr
 
 	c.Update(bson.M{"_id": topicId}, bson.M{"$inc": bson.M{"commentcount": 1}})
 
@@ -148,7 +148,7 @@ func deleteCommentHandler(handler *Handler) {
 	c = handler.DB.C(STATUS)
 	c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
 	
-    url := "/t/" + comment.TopicId.Hex()
+    url := "/p/" + comment.TopicId.Hex()
 	
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }
@@ -209,7 +209,7 @@ func editCommentHandler(handler *Handler) {
 	c = handler.DB.C(TOPICS)
 	c.Find(bson.M{"_id": comment.TopicId}).One(&temp)
 
-	url := "/t/" + comment.TopicId.Hex()
+	url := "/p/" + comment.TopicId.Hex()
 
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }

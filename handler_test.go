@@ -10,7 +10,7 @@ import (
 func TestParam(t *testing.T) {
 	res := httptest.NewRecorder()
 	testId := "24aaaaaaaaaaaaaaaaaaaaaa"
-	req, err := http.NewRequest("GET", Config.Host+"/t/"+testId, nil)
+	req, err := http.NewRequest("GET", Config.Host+"/p/"+testId, nil)
 	if err != nil {
 		panic(err)
 	}

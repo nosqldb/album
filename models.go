@@ -333,7 +333,7 @@ func (t *Topic) CanCollect(username string, db *mgo.Database) bool {
 }
 // 主题链接
 func (t *Topic) Link(id bson.ObjectId) string {
-	return "http://nosqldb.org/t/" + id.Hex()
+	return "http://nosqldb.org/p/" + id.Hex()
 
 }
 

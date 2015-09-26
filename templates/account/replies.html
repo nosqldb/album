@@ -14,7 +14,7 @@
 		    {{$topic := .Topic $.db}}
 		    {{$creater := $topic.Creater $.db}}
 			<dd>
-				回复了 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/t/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
+				回复了 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/p/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
 				<span class="pull-right">{{formattime .CreatedAt}}</span>
 				<div>{{.Html}}</div>
 			</dd>
