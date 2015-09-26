@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	logger = log.New(os.Stdout, "[gopher]:", log.LstdFlags)
+	logger = log.New(os.Stdout, "[G]:", log.LstdFlags)
 )
 
 func handlerFun(route Route) http.HandlerFunc {
