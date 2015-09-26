@@ -7,7 +7,6 @@ package gopher
 import (
 	"net/http"
 	"time"
-
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
@@ -54,7 +53,7 @@ func newSiteHandler(handler *Handler) {
 		}
 
 		var site Site
-		c = handler.DB.C(CONTENTS)
+		c = handler.DB.C(SITES)
 		err := c.Find(bson.M{"url": form.Value("url")}).One(&site)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
@@ -66,14 +65,10 @@ func newSiteHandler(handler *Handler) {
 
 		c.Insert(&Site{
 			Id_: id_,
-			Content: Content{
-				Id_:       id_,
-				Type:      TypeSite,
-				Title:     form.Value("name"),
-				Markdown:  form.Value("description"),
-				CreatedBy: user.Id_,
-				CreatedAt: time.Now(),
-			},
+			Title:     form.Value("name"),
+			Markdown:  form.Value("description"),
+			CreatedBy: user.Id_,
+			CreatedAt: time.Now(),
 			Url:        form.Value("url"),
 			CategoryId: bson.ObjectIdHex(form.Value("category")),
 		})
@@ -98,9 +93,9 @@ func editSiteHandler(handler *Handler) {
 	siteId := bson.ObjectIdHex(mux.Vars(handler.Request)["siteId"])
 
 	var site Site
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(SITES)
 
-	err := c.Find(bson.M{"_id": siteId, "content.type": TypeSite}).One(&site)
+	err := c.Find(bson.M{"_id": siteId}).One(&site)
 
 	if err != nil {
 		message(handler, "错误的连接", "错误的连接", "error")
@@ -132,7 +127,7 @@ func editSiteHandler(handler *Handler) {
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		// 检查是否用重复
 		var site2 Site
-		c = handler.DB.C(CONTENTS)
+		c = handler.DB.C(SITES)
 		err := c.Find(bson.M{"url": form.Value("url"), "_id": bson.M{"$ne": site.Id_}}).One(&site2)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
@@ -146,10 +141,10 @@ func editSiteHandler(handler *Handler) {
 
 		c.Update(bson.M{"_id": site.Id_},
 			bson.M{"$set": bson.M{
-				"content.title":     form.Value("name"),
-				"content.markdown":  form.Value("description"),
-				"content.updatedby": user.Id_.Hex(),
-				"content.updatedat": time.Now(),
+				"title":     form.Value("name"),
+				"markdown":  form.Value("description"),
+				"updatedby": user.Id_.Hex(),
+				"updatedat": time.Now(),
 				"url":               form.Value("url"),
 				"categoryid":        bson.ObjectIdHex(form.Value("category")),
 			},
@@ -175,7 +170,7 @@ func deleteSiteHandler(handler *Handler) {
 	siteId := bson.ObjectIdHex(mux.Vars(handler.Request)["siteId"])
 
 	var site Site
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(SITES)
 
 	err := c.Find(bson.M{"_id": siteId}).One(&site)
 

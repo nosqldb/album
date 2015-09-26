@@ -7,7 +7,6 @@ package gopher
 import (
 	"encoding/json"
 	"net/http"
-
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -151,7 +150,7 @@ func memberTopicsHandler(handler *Handler) {
 
 	c = handler.DB.C("contents")
 
-	pagination := NewPagination(c.Find(bson.M{"content.createdby": user.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/member/"+username+"/topics", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"content.createdby": user.Id_}).Sort("-latestrepliedat"), "/member/"+username+"/topics", PerPage)
 
 	var topics []Topic
 
@@ -204,7 +203,7 @@ func memberRepliesHandler(handler *Handler) {
 
 	c = handler.DB.C(COMMENTS)
 
-	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
 
 	query, err := pagination.Page(page)
 

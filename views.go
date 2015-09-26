@@ -155,11 +155,6 @@ func (u *Utils) AssertTopic(i interface{}) *Topic {
 	return &v
 }
 
-func (u *Utils) AssertPackage(i interface{}) *Package {
-	v, _ := i.(Package)
-	return &v
-}
-
 func message(handler *Handler, title string, message string, class string) {
 	handler.renderTemplate("message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
@@ -265,15 +260,15 @@ func searchHandler(handler *Handler) {
 		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(TOPICS)
 
 	var pagination *Pagination
 
 	if len(noSpaceKeywords) == 0 {
-		pagination = NewPagination(c.Find(bson.M{"content.type": TypeTopic}).Sort("-latestrepliedat"), "/search?"+q, PerPage)
+		pagination = NewPagination(c.Find(bson.M{}).Sort("-latestrepliedat"), "/search?"+q, PerPage)
 	} else {
 		pagination = NewPagination(c.Find(bson.M{"$and": []bson.M{
-			bson.M{"content.type": TypeTopic},
+			bson.M{},
 			bson.M{"$or": []bson.M{
 				bson.M{"$and": titleConditions},
 				bson.M{"$and": markdownConditions},

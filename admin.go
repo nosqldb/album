@@ -5,7 +5,6 @@ package gopher
 import (
 	"net/http"
 	"time"
-
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -29,8 +28,8 @@ func adminHandler(handler *Handler) {
 		panic(err)
 	}
 
-	c = handler.DB.C(CONTENTS)
-	newTopicCount, err := c.Find(bson.M{"content.createdat": bson.M{"$gt": today}}).Count()
+	c = handler.DB.C(TOPICS)
+	newTopicCount, err := c.Find(bson.M{"createdat": bson.M{"$gt": today}}).Count()
 	if err != nil {
 		panic(err)
 	}

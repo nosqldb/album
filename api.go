@@ -7,7 +7,7 @@ import (
 )
 
 func apiTopicsHandler(handler *Handler) {
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(TOPICS)
 
 	var topics []Topic
 

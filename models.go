@@ -15,27 +15,19 @@ import (
 )
 
 const (
-	TypeTopic     = 'T'
-	TypeArticle   = 'A'
-	TypeSite      = 'S'
-	TypePackage   = 'P'
 	DefaultAvatar = "gopher_teal.jpg"
 
 	ADS                 = "ads"
 	BOOKS               = "books"
 	COMMENTS            = "comments"
-	CONTENTS            = "contents"
 	TOPICS              = "topics"
 	NODES               = "nodes"
-	PACKAGES            = "packages"
-	PACKAGE_CATEGORIES  = "packagecategories"
 	LINK_EXCHANGES      = "link_exchanges"
 	SITE_CATEGORIES     = "sitecategories"
 	SITES               = "sites"
 	STATUS              = "status"
 	USERS               = "users"
 	CODE                = "code"
-	DOWNLOADED_PACKAGES = "downloaded_packages"
 
 	GITHUB_COM = "github.com"
 )
@@ -62,7 +54,7 @@ type CollectTopic struct {
 }
 
 func (ct *CollectTopic) Topic(db *mgo.Database) *Topic {
-	c := db.C(CONTENTS)
+	c := db.C(TOPICS)
 	var topic Topic
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(ct.TopicId)}).One(&topic)
 	if err != nil {
@@ -241,94 +233,6 @@ type Node struct {
 	TopicCount  int
 }
 
-// 通用的内容
-type Content struct {
-	Id_          bson.ObjectId // 同外层Id_
-	Type         int
-	Title        string
-	Markdown     string
-	Html         template.HTML
-	CommentCount int
-	Hits         int // 点击数量
-	CreatedAt    time.Time
-	CreatedBy    bson.ObjectId
-	UpdatedAt    time.Time
-	UpdatedBy    string
-}
-
-func (c *Content) Creater(db *mgo.Database) *User {
-	c_ := db.C(USERS)
-	user := User{}
-	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
-
-	return &user
-}
-
-func (c *Content) Updater(db *mgo.Database) *User {
-	if c.UpdatedBy == "" {
-		return nil
-	}
-
-	c_ := db.C(USERS)
-	user := User{}
-	c_.Find(bson.M{"_id": bson.ObjectIdHex(c.UpdatedBy)}).One(&user)
-
-	return &user
-}
-
-func (c *Content) Comments(db *mgo.Database) *[]Comment {
-	c_ := db.C("comments")
-	var comments []Comment
-
-	c_.Find(bson.M{"topicid": c.Id_}).Sort("createdat").All(&comments)
-
-	return &comments
-}
-
-// 只能收藏未收藏过的主题
-func (c *Content) CanCollect(username string, db *mgo.Database) bool {
-	var user User
-	c_ := db.C(USERS)
-	err := c_.Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		return false
-	}
-	has := false
-	for _, v := range user.TopicsCollected {
-		if v.TopicId == c.Id_.Hex() {
-			has = true
-		}
-	}
-	return !has
-}
-
-// 是否有权编辑主题
-func (c *Content) CanEdit(username string, db *mgo.Database) bool {
-	var user User
-	c_ := db.C(USERS)
-	err := c_.Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		return false
-	}
-
-	if user.IsSuperuser {
-		return true
-	}
-
-	return c.CreatedBy == user.Id_
-}
-
-func (c *Content) CanDelete(username string, db *mgo.Database) bool {
-	var user User
-	c_ := db.C("users")
-	err := c_.Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		return false
-	}
-
-	return user.IsSuperuser
-}
-
 // 主题
 type Topic struct {
 	Id_             bson.ObjectId `bson:"_id"`
@@ -474,7 +378,7 @@ type SiteCategory struct {
 // 分类下的所有站点
 func (sc *SiteCategory) Sites(db *mgo.Database) *[]Site {
 	var sites []Site
-	c := db.C("topics")
+	c := db.C(SITES)
 	c.Find(bson.M{"categoryid": sc.Id_}).All(&sites)
 
 	return &sites
@@ -482,12 +386,32 @@ func (sc *SiteCategory) Sites(db *mgo.Database) *[]Site {
 
 // 站点
 type Site struct {
-	Content
 	Id_        bson.ObjectId `bson:"_id"`
 	Url        string
 	CategoryId bson.ObjectId
+	Title        string
+	Markdown     string
+	CreatedAt    time.Time
+	CreatedBy    bson.ObjectId
+	UpdatedAt    time.Time
+	UpdatedBy    string
 }
 
+// 是否有权编辑主题
+func (t *Site) CanEdit(username string, db *mgo.Database) bool {
+	var user User
+	t_ := db.C(USERS)
+	err := t_.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+
+	if user.IsSuperuser {
+		return true
+	}
+
+	return t.CreatedBy == user.Id_
+}
 
 // 评论
 type Comment struct {
@@ -532,29 +456,6 @@ func (c *Comment) Topic(db *mgo.Database) *Topic {
 	c_ := db.C("topics")
 	c_.Find(bson.M{"_id": c.TopicId}).One(&topic)
 	return &topic
-}
-
-// 包分类
-type PackageCategory struct {
-	Id_          bson.ObjectId `bson:"_id"`
-	Id           string
-	Name         string
-	PackageCount int
-}
-
-type Package struct {
-	Content
-	Id_        bson.ObjectId `bson:"_id"`
-	CategoryId bson.ObjectId
-	Url        string
-}
-
-func (p *Package) Category(db *mgo.Database) *PackageCategory {
-	category := PackageCategory{}
-	c := db.C("packagecategories")
-	c.Find(bson.M{"_id": p.CategoryId}).One(&category)
-
-	return &category
 }
 
 type LinkExchange struct {

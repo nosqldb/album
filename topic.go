@@ -217,7 +217,7 @@ func editTopicHandler(handler *Handler) {
 
 	c := handler.DB.C(TOPICS)
 	var topic Topic
-	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": topicId}).One(&topic)
 
 	if err != nil {
 		message(handler, "没有该主题", "没有该主题,不能编辑", "error")
@@ -249,14 +249,14 @@ func editTopicHandler(handler *Handler) {
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
 			nodeId := bson.ObjectIdHex(form.Value("node"))
-			c = handler.DB.C(CONTENTS)
+			c = handler.DB.C(TOPICS)
 			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
 				"nodeid":            nodeId,
-				"content.title":     form.Value("title"),
-				"content.markdown":  form.Value("editormd-markdown-doc"),
-				"content.html":      template.HTML(form.Value("editormd-html-code")),
-				"content.updatedat": time.Now(),
-				"content.updatedby": user.Id_.Hex(),
+				"title":     form.Value("title"),
+				"markdown":  form.Value("editormd-markdown-doc"),
+				"html":      template.HTML(form.Value("editormd-html-code")),
+				"updatedat": time.Now(),
+				"updatedby": user.Id_.Hex(),
 			}})
 
 			// 如果两次的节点不同,更新节点的主题数量
@@ -379,9 +379,9 @@ func topicInNodeHandler(handler *Handler) {
 		return
 	}
 
-	c = handler.DB.C(CONTENTS)
+	c = handler.DB.C(TOPICS)
 
-	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/", 20)
+	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_}).Sort("-latestrepliedat"), "/", 20)
 
 	var topics []Topic
 
@@ -424,11 +424,11 @@ func deleteTopicHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := bson.ObjectIdHex(vars["topicId"])
 
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(TOPICS)
 
 	topic := Topic{}
 
-	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": topicId}).One(&topic)
 
 	if err != nil {
 		fmt.Println("deleteTopic:", err.Error())
@@ -450,7 +450,7 @@ func deleteTopicHandler(handler *Handler) {
 	}
 
 	// 删除Topic记录
-	c = handler.DB.C(CONTENTS)
+	c = handler.DB.C(TOPICS)
 	c.Remove(bson.M{"_id": topic.Id_})
 
 	http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
@@ -459,8 +459,8 @@ func deleteTopicHandler(handler *Handler) {
 // 列出置顶的主题
 func listTopTopicsHandler(handler *Handler) {
 	var topics []Topic
-	c := handler.DB.C(CONTENTS)
-	c.Find(bson.M{"content.type": TypeTopic, "is_top": true}).All(&topics)
+	c := handler.DB.C(TOPICS)
+	c.Find(bson.M{"is_top": true}).All(&topics)
 
 	handler.renderTemplate("/topic/top_list.html", ADMIN, map[string]interface{}{
 		"topics": topics,
@@ -470,7 +470,7 @@ func listTopTopicsHandler(handler *Handler) {
 // 设置置顶
 func setTopTopicHandler(handler *Handler) {
 	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["id"])
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(TOPICS)
 	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": true}})
 	handler.Redirect("/t/" + topicId.Hex())
 }
@@ -480,7 +480,7 @@ func cancelTopTopicHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := bson.ObjectIdHex(vars["id"])
 
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(TOPICS)
 	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": false}})
 	handler.Redirect("/admin/top/topics")
 }

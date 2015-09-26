@@ -8,7 +8,6 @@ import (
 	"html/template"
 	"net/http"
 	"time"
-
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

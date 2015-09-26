@@ -69,9 +69,6 @@ var routes = []Route{
 	{"/admin/site_category/new", Administrator, adminNewSiteCategoryHandler},
 	{"/admin/users", Administrator, adminListUsersHandler},
 	{"/admin/user/{userId}/activate", Administrator, adminActivateUserHandler},
-	{"/admin/package_categories", Administrator, adminListPackageCategoriesHandler},
-	{"/admin/package_category/new", Administrator, adminNewPackageCategoryHandler},
-	{"/admin/package_category/{id}/edit", Administrator, adminEditPackageCategoryHandler},
 	{"/admin/link_exchanges", Administrator, adminListLinkExchangesHandler},
 	{"/admin/link_exchange/new", Administrator, adminNewLinkExchangeHandler},
 	{"/admin/link_exchange/{linkExchangeId}/edit", Administrator, adminEditLinkExchangeHandler},
@@ -139,20 +136,10 @@ var routes = []Route{
 	{"/site/{siteId:[0-9a-f]{24}}/edit", Authenticated, editSiteHandler},
 	{"/site/{siteId:[0-9a-f]{24}}/delete", Administrator, deleteSiteHandler},
 
-	{"/packages", Everyone, packagesHandler},
-	{"/package/new", Authenticated, newPackageHandler},
-	{"/package", Everyone, getPackageUrlHandler},
-	{"/packages/{categoryId}", Everyone, listPackagesHandler},
-	{"/p/{packageId}", Everyone, showPackageHandler},
-	{"/p/{packageId}/edit", Authenticated, editPackageHandler},
-	{"/p/{packageId}/delete", Administrator, deletePackageHandler},
-
 	{"/books", Everyone, booksHandler},
 	{"/book/{id}", Everyone, showBookHandler},
 
 	{"/download", Everyone, downloadHandler},
-	{"/download/package", Everyone, downloadPackagesHandler},
-	{"/download/liteide", Everyone, downloadLiteIDEHandler},
 
 	{"/upload/image", Authenticated, uploadImageHandler},
 
