@@ -5,12 +5,11 @@ import (
 	"html/template"
 	"net/http"
 	"time"
-
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 )
 
-// URL: /comment/{contentId}
+// URL: /comment/{topicId}
 // 评论，不同内容共用一个评论方法
 func commentHandler(handler *Handler) {
 	if handler.Request.Method != "POST" {
@@ -18,29 +17,19 @@ func commentHandler(handler *Handler) {
 	}
 
 	user, _ := currentUser(handler)
-	contentIdStr := handler.param("contentId")
-	contentId := bson.ObjectIdHex(contentIdStr)
+	topicIdStr := handler.param("topicId")
+	topicId := bson.ObjectIdHex(topicIdStr)
 
 	var temp map[string]interface{}
-	c := handler.DB.C(CONTENTS)
-	c.Find(bson.M{"_id": contentId}).One(&temp)
+	c := handler.DB.C(TOPICS)
+	c.Find(bson.M{"_id": topicId}).One(&temp)
 
-	temp2 := temp["content"].(map[string]interface{})
 	var contentCreator bson.ObjectId
-	contentCreator = temp2["createdby"].(bson.ObjectId)
-	type_ := temp2["type"].(int)
+	contentCreator = temp["createdby"].(bson.ObjectId)
 
-	var url string
-	switch type_ {
-	case TypeArticle:
-		url = "/a/" + contentIdStr
-	case TypeTopic:
-		url = "/t/" + contentIdStr
-	case TypePackage:
-		url = "/p/" + contentIdStr
-	}
+	url := "/t/" + topicIdStr
 
-	c.Update(bson.M{"_id": contentId}, bson.M{"$inc": bson.M{"content.commentcount": 1}})
+	c.Update(bson.M{"_id": topicId}, bson.M{"$inc": bson.M{"commentcount": 1}})
 
 	markdown := handler.Request.FormValue("editormd-markdown-doc")
 	html := handler.Request.FormValue("editormd-html-code")
@@ -51,63 +40,61 @@ func commentHandler(handler *Handler) {
 	c = handler.DB.C(COMMENTS)
 	c.Insert(&Comment{
 		Id_:       Id_,
-		Type:      type_,
-		ContentId: contentId,
+		TopicId:   topicId,
 		Markdown:  markdown,
 		Html:      template.HTML(html),
 		CreatedBy: user.Id_,
 		CreatedAt: now,
 	})
-	if type_ == TypeTopic {
-		// 修改最后回复用户Id和时间
-		c = handler.DB.C(CONTENTS)
-		c.Update(bson.M{"_id": contentId}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
+	
+	// 修改最后回复用户Id和时间
+	c = handler.DB.C(TOPICS)
+	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
 
-		// 修改中的回复数量
-		c = handler.DB.C(STATUS)
-		c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
-		// 修改对应用户的最近at.
-		c = handler.DB.C(USERS)
-		usernames := findAts(markdown)
-		for _, name := range usernames {
-			u, err := getUserByName(c, name)
-			if err != nil {
-				logger.Println(err)
-				continue
-			}
-			if user.Username != u.Username {
-				u.AtBy(c, user.Username, contentIdStr, Id_.Hex())
+	// 修改中的回复数量
+	c = handler.DB.C(STATUS)
+	c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
+	// 修改对应用户的最近at.
+	c = handler.DB.C(USERS)
+	usernames := findAts(markdown)
+	for _, name := range usernames {
+		u, err := getUserByName(c, name)
+		if err != nil {
+			logger.Println(err)
+			continue
+		}
+		if user.Username != u.Username {
+			u.AtBy(c, user.Username, topicIdStr, Id_.Hex())
+		}
+	}
+
+	//  修改用户的最近回复
+	//  该最近回复提醒通过url被点击的时候会被disactive
+	//  更新最近的评论
+	//  自己的评论就不提示了
+	tempTitle := temp["title"].(string)
+
+	if contentCreator.Hex() != user.Id_.Hex() {
+		var recentreplies []Reply
+		var Creater User
+		err := c.Find(bson.M{"_id": contentCreator}).One(&Creater)
+		if err != nil {
+			fmt.Println(err)
+		}
+		recentreplies = Creater.RecentReplies
+		//添加最近评论所在的主题id
+		duplicate := false
+		for _, v := range recentreplies {
+			if topicIdStr == v.TopicId {
+				duplicate = true
 			}
 		}
+		//如果回复的主题有最近回复的话就不添加进去，因为在同一主题下就能看到
+		if !duplicate {
+			recentreplies = append(recentreplies, Reply{topicIdStr, tempTitle})
 
-		//  修改用户的最近回复
-		//  该最近回复提醒通过url被点击的时候会被disactive
-		//  更新最近的评论
-		//  自己的评论就不提示了
-		tempTitle := temp2["title"].(string)
-
-		if contentCreator.Hex() != user.Id_.Hex() {
-			var recentreplies []Reply
-			var Creater User
-			err := c.Find(bson.M{"_id": contentCreator}).One(&Creater)
-			if err != nil {
+			if err = c.Update(bson.M{"_id": contentCreator}, bson.M{"$set": bson.M{"recentreplies": recentreplies}}); err != nil {
 				fmt.Println(err)
-			}
-			recentreplies = Creater.RecentReplies
-			//添加最近评论所在的主题id
-			duplicate := false
-			for _, v := range recentreplies {
-				if contentIdStr == v.ContentId {
-					duplicate = true
-				}
-			}
-			//如果回复的主题有最近回复的话就不添加进去，因为在同一主题下就能看到
-			if !duplicate {
-				recentreplies = append(recentreplies, Reply{contentIdStr, tempTitle})
-
-				if err = c.Update(bson.M{"_id": contentCreator}, bson.M{"$set": bson.M{"recentreplies": recentreplies}}); err != nil {
-					fmt.Println(err)
-				}
 			}
 		}
 	}
@@ -137,42 +124,32 @@ func deleteCommentHandler(handler *Handler) {
 
 	c.Remove(bson.M{"_id": comment.Id_})
 
-	c = handler.DB.C(CONTENTS)
-	c.Update(bson.M{"_id": comment.ContentId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
+	c = handler.DB.C(TOPICS)
+	c.Update(bson.M{"_id": comment.TopicId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
+	
+	var topic Topic
+	c.Find(bson.M{"_id": comment.TopicId}).One(&topic)
+	if topic.LatestReplierId == comment.CreatedBy.Hex() {
+		if topic.CommentCount == 0 {
+			// 如果删除后没有回复，设置最后回复id为空，最后回复时间为创建时间
+			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": "", "latestrepliedat": topic.CreatedAt}})
+		} else {
+			// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
+			var latestComment Comment
+			c = handler.DB.C("comments")
+			c.Find(bson.M{"topicid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
 
-	if comment.Type == TypeTopic {
-		var topic Topic
-		c.Find(bson.M{"_id": comment.ContentId}).One(&topic)
-		if topic.LatestReplierId == comment.CreatedBy.Hex() {
-			if topic.CommentCount == 0 {
-				// 如果删除后没有回复，设置最后回复id为空，最后回复时间为创建时间
-				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": "", "latestrepliedat": topic.CreatedAt}})
-			} else {
-				// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
-				var latestComment Comment
-				c = handler.DB.C("comments")
-				c.Find(bson.M{"contentid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
-
-				c = handler.DB.C("contents")
-				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
-			}
+			c = handler.DB.C("contents")
+			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
 		}
-
-		// 修改中的回复数量
-		c = handler.DB.C(STATUS)
-		c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
 	}
 
-	var url string
-	switch comment.Type {
-	case TypeArticle:
-		url = "/a/" + comment.ContentId.Hex()
-	case TypeTopic:
-		url = "/t/" + comment.ContentId.Hex()
-	case TypePackage:
-		url = "/p/" + comment.ContentId.Hex()
-	}
-
+	// 修改中的回复数量
+	c = handler.DB.C(STATUS)
+	c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
+	
+    url := "/t/" + comment.TopicId.Hex()
+	
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }
 
@@ -229,21 +206,10 @@ func editCommentHandler(handler *Handler) {
 	}})
 
 	var temp map[string]interface{}
-	c = handler.DB.C(CONTENTS)
-	c.Find(bson.M{"_id": comment.ContentId}).One(&temp)
+	c = handler.DB.C(TOPICS)
+	c.Find(bson.M{"_id": comment.TopicId}).One(&temp)
 
-	temp2 := temp["content"].(map[string]interface{})
-	type_ := temp2["type"].(int)
-
-	var url string
-	switch type_ {
-	case TypeArticle:
-		url = "/a/" + comment.ContentId.Hex()
-	case TypeTopic:
-		url = "/t/" + comment.ContentId.Hex()
-	case TypePackage:
-		url = "/p/" + comment.ContentId.Hex()
-	}
+	url := "/t/" + comment.TopicId.Hex()
 
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }

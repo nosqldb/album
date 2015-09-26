@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"sort"
 	"time"
-
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2"
@@ -47,7 +46,7 @@ func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url strin
 	c = handler.DB.C(STATUS)
 	c.Find(nil).One(&status)
 
-	c = handler.DB.C(CONTENTS)
+	c = handler.DB.C(TOPICS)
 
 	var topTopics []Topic
 
@@ -124,19 +123,19 @@ func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url strin
 // URL: /
 // 网站首页,列出按回帖时间倒序排列的第一页
 func indexHandler(handler *Handler) {
-	topicsHandler(handler, bson.M{"content.type": TypeTopic}, "-latestrepliedat", "/", "latestReply")
+	topicsHandler(handler, bson.M{}, "-latestrepliedat", "/", "latestReply")
 }
 
 // URL: /topics/latest
 // 最新发布的主题，按照发布时间倒序排列
 func latestTopicsHandler(handler *Handler) {
-	topicsHandler(handler, bson.M{"content.type": TypeTopic}, "-content.createdat", "/topics/latest", "latestCreate")
+	topicsHandler(handler, bson.M{}, "-createdat", "/topics/latest", "latestCreate")
 }
 
 // URL: /topics/no_reply
 // 无人回复的主题，按照发布时间倒序排列
 func noReplyTopicsHandler(handler *Handler) {
-	topicsHandler(handler, bson.M{"content.type": TypeTopic, "content.commentcount": 0}, "-content.createdat", "/topics/no_reply", "noReply")
+	topicsHandler(handler, bson.M{"commentcount": 0}, "-createdat", "/topics/no_reply", "noReply")
 }
 
 // URL: /topic/new
@@ -165,7 +164,7 @@ func newTopicHandler(handler *Handler) {
 		if form.Validate(handler.Request) {
 			user, _ := currentUser(handler)
 
-			c = handler.DB.C(CONTENTS)
+			c = handler.DB.C(TOPICS)
 
 			id_ := bson.NewObjectId()
 
@@ -173,18 +172,14 @@ func newTopicHandler(handler *Handler) {
 
 			nodeId := bson.ObjectIdHex(form.Value("node"))
 			err := c.Insert(&Topic{
-				Content: Content{
-					Id_:       id_,
-					Type:      TypeTopic,
+				    Id_:             id_,
+				    NodeId:          nodeId,
 					Title:     form.Value("title"),
 					Markdown:  form.Value("editormd-markdown-doc"),
 					Html:      template.HTML(form.Value("editormd-html-code")),
 					CreatedBy: user.Id_,
 					CreatedAt: now,
-				},
-				Id_:             id_,
-				NodeId:          nodeId,
-				LatestRepliedAt: now,
+				    LatestRepliedAt: now,
 			})
 
 			if err != nil {
@@ -220,7 +215,7 @@ func editTopicHandler(handler *Handler) {
 
 	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["topicId"])
 
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(TOPICS)
 	var topic Topic
 	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
 
@@ -290,7 +285,7 @@ func showTopicHandler(handler *Handler) {
 	testParam()
 	vars := mux.Vars(handler.Request)
 	topicId := vars["topicId"]
-	c := handler.DB.C(CONTENTS)
+	c := handler.DB.C(TOPICS)
 	cusers := handler.DB.C(USERS)
 	topic := Topic{}
 
@@ -299,7 +294,7 @@ func showTopicHandler(handler *Handler) {
 		return
 	}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId)}).One(&topic)
 
 	if err != nil {
 		logger.Println(err)
@@ -307,7 +302,7 @@ func showTopicHandler(handler *Handler) {
 		return
 	}
 
-	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
+	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"hits": 1}})
 
 	user, has := currentUser(handler)
 
@@ -318,7 +313,7 @@ func showTopicHandler(handler *Handler) {
 		pos := -1
 
 		for k, v := range replies {
-			if v.ContentId == topicId {
+			if v.TopicId == topicId {
 				pos = k
 				break
 			}
@@ -339,7 +334,7 @@ func showTopicHandler(handler *Handler) {
 		pos = -1
 
 		for k, v := range ats {
-			if v.ContentId == topicId {
+			if v.TopicId == topicId {
 				pos = k
 				break
 			}

@@ -180,7 +180,7 @@
 	<div class="panel-body">
 	  <ul>
 		{{range $creater.LatestTopics .db}}
-		<li><a href="/t/{{.Id_.Hex}}">{{.Content.Title}}</a></li>
+		<li><a href="/t/{{.Id_.Hex}}">{{.Title}}</a></li>
 		{{end}}
 	  </ul>
 	</div>
