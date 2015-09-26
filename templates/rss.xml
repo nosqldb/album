@@ -14,12 +14,12 @@
     </image>
 	{{range $t := .topics }}
     <item>
-      <title><![CDATA[{{$t.Content.Title}}]]></title>
-      <link>{{$t.Link $t.Content.Id_ }}</link>
-      <guid>{{$t.Link $t.Content.Id_ }}</guid>
-      <description><![CDATA[{{$t.Content.Html}}]]></description>
-      <author><![CDATA[golangtc.com ]]></author>
-      <pubDate>{{$t.Format $t.Content.CreatedAt}}</pubDate>
+      <title><![CDATA[{{$t.Title}}]]></title>
+      <link>{{$t.Link $t.Id_ }}</link>
+      <guid>{{$t.Link $t.Id_ }}</guid>
+      <description><![CDATA[{{$t.Html}}]]></description>
+      <author><![CDATA[nosqldb.org ]]></author>
+      <pubDate>{{$t.Format $t.CreatedAt}}</pubDate>
     </item>
 	{{end}}
   </channel>

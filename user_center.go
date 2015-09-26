@@ -3,12 +3,10 @@ package gopher
 import (
 	"fmt"
 	"net/http"
-	"strings"
-
-	"github.com/pborman/uuid"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
+	. "github.com/nosqldb/G/crypto"
 )
 
 // URL: /user_center
@@ -196,10 +194,8 @@ func changePasswordHandler(handler *Handler) {
 		if form.Value("new_password") == form.Value("confirm_password") {
 			if user.CheckPassword(form.Value("current_password")) {
 				c := handler.DB.C(USERS)
-				salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
-					"password": encryptPassword(form.Value("new_password"), salt),
-					"salt":     salt,
+					"password": GenPwd(form.Value("new_password")),
 				}})
 				message(handler, "密码修改成功", `密码修改成功`, "success")
 				return

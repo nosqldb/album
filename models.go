@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/sessions"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	. "github.com/nosqldb/G/crypto"
 )
 
 const (
@@ -69,7 +70,6 @@ type User struct {
 	Id_             bson.ObjectId `bson:"_id"`
 	Username        string        //如果关联社区帐号，默认使用社区的用户名
 	Password        string
-	Salt            string `bson:"salt"`
 	Email           string //如果关联社区帐号,默认使用社区的邮箱
 	Avatar          string
 	Website         string
@@ -146,7 +146,7 @@ func (u *User) GetGithubValues(session *sessions.Session) {
 
 // 检查密码是否正确
 func (u User) CheckPassword(password string) bool {
-	return u.Password == encryptPassword(password, u.Salt)
+	return ComparePwd(password, u.Password)
 }
 
 // 删除通过session传的默认信息

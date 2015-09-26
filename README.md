@@ -44,7 +44,6 @@ e.g.:
         "static_file_version": 1,
         "go_get_path": "/tmp/download",
         "packages_download_path": "/var/go/gopher/static/download/packages",
-        "public_salt": "",
 		"github_auth_client_id": "example",
 		"github_auth_client_secret": "example",
 		"github_login_redirect": "/",

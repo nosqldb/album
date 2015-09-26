@@ -4,7 +4,6 @@
 package gopher
 
 import (
-	"crypto/md5"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,7 +11,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
+	. "github.com/nosqldb/G/crypto"
 	"github.com/pborman/uuid"
 	"github.com/bradrydzewski/go.auth"
 	"github.com/dchest/captcha"
@@ -70,13 +69,6 @@ func generateUsersJson(db *mgo.Database) {
 		panic(err)
 	}
 	usersJson = b
-}
-
-// 加密密码，md5(md5(password + salt) + public_salt)
-func encryptPassword(password, salt string) string {
-	saltedPassword := fmt.Sprintf("%x", md5.Sum([]byte(password))) + salt
-	md5SaltedPassword := fmt.Sprintf("%x", md5.Sum([]byte(saltedPassword)))
-	return fmt.Sprintf("%x", md5.Sum([]byte(md5SaltedPassword+Config.PublicSalt)))
 }
 
 // 返回当前用户
@@ -146,7 +138,8 @@ func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Reque
 					handler.renderTemplate("accoun/auth_login.html", BASE, map[string]interface{}{"form": form})
 					return
 				}
-				if user.Password != encryptPassword(form.Value("password"), user.Salt) {
+
+				if !ComparePwd(form.Value("password"), user.Password) {
 					form.AddError("password", "密码和用户名不匹配")
 
 					handler.renderTemplate("account/auth_login.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
@@ -249,14 +242,12 @@ func signupHandler(handler *Handler) {
 			id := bson.NewObjectId()
 			username := form.Value("username")
 			validateCode := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
-			salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			index := status.UserIndex + 1
 			u := &User{
 				Id_:          id,
 				Username:     username,
-				Password:     encryptPassword(form.Value("password"), salt),
+				Password:     GenPwd(form.Value("password")),
 				Avatar:       "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
-				Salt:         salt,
 				Email:        form.Value("email"),
 				ValidateCode: validateCode,
 				IsActive:     true,
@@ -487,7 +478,7 @@ func forgotPasswordHandler(handler *Handler) {
 				form.AddError("username", "用户名和邮件不匹配")
 			} else {
 				message2 := `Hi %s,<br>
-我们的系统收到一个请求，说你希望通过电子邮件重新设置你在 Golang中国 的密码。你可以点击下面的链接开始重设密码：
+我们的系统收到一个请求，说你希望通过电子邮件重新设置你在 nosqldb.org 的密码。你可以点击下面的链接开始重设密码：
 
 <a href="%s/reset/%s">%s/reset/%s</a><br>
 
@@ -498,7 +489,7 @@ func forgotPasswordHandler(handler *Handler) {
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"resetcode": code}})
 				message2 = fmt.Sprintf(message2, user.Username, Config.Host, code, Config.Host, code)
 				webhelpers.SendMail(
-					"[Golang中国]重设密码",
+					"[nosqldb.org]重设密码",
 					message2,
 					Config.FromEmail,
 					[]string{user.Email},
@@ -541,13 +532,11 @@ func resetPasswordHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		if form.Value("new_password") == form.Value("confirm_password") {
-			salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			c.Update(
 				bson.M{"_id": user.Id_},
 				bson.M{
 					"$set": bson.M{
-						"password":  encryptPassword(form.Value("new_password"), salt),
-						"salt":      salt,
+						"password":  GenPwd(form.Value("new_password")),
 						"resetcode": "",
 					},
 				},

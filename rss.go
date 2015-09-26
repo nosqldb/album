@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	contents   []Topic   //当日内容
+	topics   []Topic   //当日内容
 	cache      list.List //缓存
 	latestTime time.Time //最后更新时间
 )
@@ -43,10 +43,10 @@ func RssRefresh() {
 				latestTime = now.Add(time.Hour) //一小时后重新连接.
 				continue
 			} else {
-				c := session.DB("gopher").C("contents")
-				c.Find(bson.M{"content.createdat": bson.M{"$gt": latestTime}}).Sort("-content.createdat").All(&contents)
+				c := session.DB("gopher").C("topics")
+				c.Find(bson.M{"createdat": bson.M{"$gt": latestTime}}).Sort("-createdat").All(&topics)
 				latestTime = now
-				cache.PushBack(contents)
+				cache.PushBack(topics)
 				if cache.Len() > 7 {
 					cache.Remove(cache.Front())
 				}
