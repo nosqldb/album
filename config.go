@@ -1,4 +1,4 @@
-package gopher
+package g
 
 import (
 	"encoding/json"
@@ -14,6 +14,7 @@ type ConfigStruct struct {
 	Host                       string `json:"host"`
 	Port                       int    `json:"port"`
 	DB                         string `json:"db"`
+	DBNAME                         string `json:"dbname"`
 	CookieSecret               string `json:"cookie_secret"`
 	SmtpUsername               string `json:"smtp_username"`
 	SmtpPassword               string `json:"smtp_password"`

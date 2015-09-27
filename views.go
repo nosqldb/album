@@ -2,7 +2,7 @@
 一些辅助方法
 */
 
-package gopher
+package g
 
 import (
 	"fmt"

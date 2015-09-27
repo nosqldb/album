@@ -2,6 +2,7 @@
 	"host": "http://localhost:8888",
 	"port": 8888,
 	"db":"localhost:27017",
+	"dbname":"G",
 	"cookie_secret": "05e0ba2eca9411e18155109add4b8aac",
 	"smtp_username": "username@example.com",
 	"smtp_password": "password",

@@ -2,7 +2,7 @@
 分页
 */
 
-package gopher
+package g
 
 import (
 	"errors"

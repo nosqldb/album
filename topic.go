@@ -2,7 +2,7 @@
 主题
 */
 
-package gopher
+package g
 
 import (
 	"fmt"

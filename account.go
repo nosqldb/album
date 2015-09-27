@@ -1,7 +1,7 @@
 /*
 处理用户相关的操作,注册,登录,验证,等等
 */
-package gopher
+package g
 
 import (
 	"encoding/json"

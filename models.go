@@ -2,7 +2,7 @@
 和MongoDB对应的struct
 */
 
-package gopher
+package g
 
 import (
 	"errors"

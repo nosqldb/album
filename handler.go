@@ -1,7 +1,7 @@
 /*
 包含请求上下文和处理函数的结构体.
 */
-package gopher
+package g
 
 import (
 	"encoding/json"

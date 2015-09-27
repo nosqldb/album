@@ -1,6 +1,6 @@
 //后台管理
 
-package gopher
+package g
 
 import (
 	"net/http"

@@ -1,7 +1,7 @@
 /*
 下载
 */
-package gopher
+package g
 
 import (
 	"encoding/json"

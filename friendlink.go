@@ -1,8 +1,7 @@
-package gopher
+package g
 
 import (
 	"net/http"
-
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
@@ -10,19 +9,19 @@ import (
 
 // URL: /admin/links
 // 友情链接列表
-func adminListLinkExchangesHandler(handler *Handler) {
+func adminListLinksHandler(handler *Handler) {
 	c := handler.DB.C(LINKS)
-	var linkExchanges []Link
-	c.Find(nil).All(&linkExchanges)
+	var links []Link
+	c.Find(nil).All(&links)
 
 	handler.renderTemplate("admin/links.html", ADMIN, map[string]interface{}{
-		"linkExchanges": linkExchanges,
+		"links": links,
 	})
 }
 
 // ULR: /admin/link/new
 // 增加友链
-func adminNewLinkExchangeHandler(handler *Handler) {
+func adminNewLinkHandler(handler *Handler) {
 	defer dps.Persist()
 
 	form := wtforms.NewForm(
@@ -42,8 +41,8 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 		}
 
 		c := handler.DB.C(LINKS)
-		var linkExchange Link
-		err := c.Find(bson.M{"url": form.Value("url")}).One(&linkExchange)
+		var link Link
+		err := c.Find(bson.M{"url": form.Value("url")}).One(&link)
 
 		if err == nil {
 			form.AddError("url", "该URL已经有了")
@@ -78,35 +77,35 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 	})
 }
 
-// URL: /admin/link/{linkExchangeId}/edit
+// URL: /admin/link/{linkId}/edit
 // 编辑友情链接
-func adminEditLinkExchangeHandler(handler *Handler) {
+func adminEditLinkHandler(handler *Handler) {
 	defer dps.Persist()
 
-	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
+	linkId := mux.Vars(handler.Request)["linkId"]
 
 	c := handler.DB.C(LINKS)
-	var linkExchange Link
-	c.Find(bson.M{"_id": bson.ObjectIdHex(linkExchangeId)}).One(&linkExchange)
+	var link Link
+	c.Find(bson.M{"_id": bson.ObjectIdHex(linkId)}).One(&link)
 
 	form := wtforms.NewForm(
-		wtforms.NewTextField("name", "名称", linkExchange.Name, wtforms.Required{}),
-		wtforms.NewTextField("url", "URL", linkExchange.URL, wtforms.Required{}, wtforms.URL{}),
-		wtforms.NewTextField("description", "描述", linkExchange.Description, wtforms.Required{}),
-		wtforms.NewTextField("logo", "Logo", linkExchange.Logo),
+		wtforms.NewTextField("name", "名称", link.Name, wtforms.Required{}),
+		wtforms.NewTextField("url", "URL", link.URL, wtforms.Required{}, wtforms.URL{}),
+		wtforms.NewTextField("description", "描述", link.Description, wtforms.Required{}),
+		wtforms.NewTextField("logo", "Logo", link.Logo),
 	)
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
 			handler.renderTemplate("links/form.html", ADMIN, map[string]interface{}{
-				"linkExchange": linkExchange,
+				"link": link,
 				"form":         form,
 				"isNew":        false,
 			})
 			return
 		}
 
-		err := c.Update(bson.M{"_id": linkExchange.Id_}, bson.M{"$set": bson.M{
+		err := c.Update(bson.M{"_id": link.Id_}, bson.M{"$set": bson.M{
 			"name":         form.Value("name"),
 			"url":          form.Value("url"),
 			"description":  form.Value("description"),
@@ -124,19 +123,19 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 	}
 
 	handler.renderTemplate("links/form.html", ADMIN, map[string]interface{}{
-		"linkExchange": linkExchange,
+		"link": link,
 		"form":         form,
 		"isNew":        false,
 	})
 }
 
-// URL: /admin/link/{linkExchangeId}/delete
+// URL: /admin/link/{linkId}/delete
 // 删除友情链接
-func adminDeleteLinkExchangeHandler(handler *Handler) {
-	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
+func adminDeleteLinkHandler(handler *Handler) {
+	linkId := mux.Vars(handler.Request)["linkId"]
 
 	c := handler.DB.C(LINKS)
-	c.RemoveId(bson.ObjectIdHex(linkExchangeId))
+	c.RemoveId(bson.ObjectIdHex(linkId))
 
 	handler.ResponseWriter.Write([]byte("true"))
 }

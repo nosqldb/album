@@ -2,7 +2,7 @@
 节点
 */
 
-package gopher
+package g
 
 import (
 	"net/http"

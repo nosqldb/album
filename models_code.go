@@ -1,4 +1,4 @@
-package gopher
+package g
 
 import (
 	"gopkg.in/mgo.v2"

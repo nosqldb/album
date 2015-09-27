@@ -1,6 +1,6 @@
 // 提供 RESTful API 服务
 
-package gopher
+package g
 
 import (
 	"gopkg.in/mgo.v2/bson"

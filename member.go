@@ -2,7 +2,7 @@
 会员
 */
 
-package gopher
+package g
 
 import (
 	"encoding/json"

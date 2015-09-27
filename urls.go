@@ -2,7 +2,7 @@
 URL和Handler的Mapping
 */
 
-package gopher
+package g
 
 import (
 	"net/http"
@@ -24,7 +24,7 @@ func NewHandler(w http.ResponseWriter, r *http.Request) *Handler {
 		Request:        r,
 		StartTime:      time.Now(),
 		Session:        session,
-		DB:             session.DB("gopher"),
+		DB:             session.DB(Config.DBNAME),
 	}
 }
 
@@ -68,10 +68,10 @@ var routes = []Route{
 	{"/admin/site_category/new", Administrator, adminNewSiteCategoryHandler},
 	{"/admin/users", Administrator, adminListUsersHandler},
 	{"/admin/user/{userId}/activate", Administrator, adminActivateUserHandler},
-	{"/admin/links", Administrator, adminListLinkExchangesHandler},
-	{"/admin/link/new", Administrator, adminNewLinkExchangeHandler},
-	{"/admin/link/{linkExchangeId}/edit", Administrator, adminEditLinkExchangeHandler},
-	{"/admin/link/{linkExchangeId}/delete", Administrator, adminDeleteLinkExchangeHandler},
+	{"/admin/links", Administrator, adminListLinksHandler},
+	{"/admin/link/new", Administrator, adminNewLinkHandler},
+	{"/admin/link/{linkId}/edit", Administrator, adminEditLinkHandler},
+	{"/admin/link/{linkId}/delete", Administrator, adminDeleteLinkHandler},
 	{"/admin/ads", Administrator, adminListAdsHandler},
 	{"/admin/ad/new", Administrator, adminNewAdHandler},
 	{"/admin/ad/{id:[0-9a-f]{24}}/delete", Administrator, adminDeleteAdHandler},

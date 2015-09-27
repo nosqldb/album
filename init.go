@@ -1,10 +1,9 @@
-package gopher
+package g
 
 import (
 	"fmt"
 	"os"
 	"strings"
-
 	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
 	. "github.com/qiniu/api.v6/conf"
@@ -30,7 +29,7 @@ func init() {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	db := session.DB("gopher")
+	db := session.DB(Config.DBNAME)
 
 	store = sessions.NewCookieStore([]byte(Config.CookieSecret))
 

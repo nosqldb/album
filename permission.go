@@ -1,4 +1,4 @@
-package gopher
+package g
 
 //PerType 是一个权限类型.
 type PerType uint

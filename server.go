@@ -2,7 +2,7 @@
 读取配置文件,设置URL,启动服务器
 */
 
-package gopher
+package g
 
 import (
 	"fmt"

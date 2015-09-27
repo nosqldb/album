@@ -1,4 +1,4 @@
-package gopher
+package g
 
 import (
 	"net/http"
