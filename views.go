@@ -340,7 +340,7 @@ func uploadImageHandler(handler *Handler) {
 	ret := new(qiniuIo.PutRet)
 
 	var policy = rs.PutPolicy{
-		Scope: "gopher",
+		Scope: "nosqldb",
 	}
 
 	err = qiniuIo.Put(

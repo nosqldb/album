@@ -18,7 +18,6 @@ func NewHandler(w http.ResponseWriter, r *http.Request) *Handler {
 	}
 
 	session.SetMode(mgo.Monotonic, true)
-
 	return &Handler{
 		ResponseWriter: w,
 		Request:        r,
@@ -116,7 +115,7 @@ var routes = []Route{
 	{"/p/{topicId:[0-9a-f]{24}}", Everyone, showTopicHandler},
 	{"/p/{topicId:[0-9a-f]{24}}/edit", Authenticated, editTopicHandler},
 	{"/p/{topicId:[0-9a-f]{24}}/collect", Authenticated, collectTopicHandler},
-	{"/p/{topicId/{topicId:[0-9a-f]{24}}/delete", Administrator, deleteTopicHandler},
+	{"/p/{topicId:[0-9a-f]{24}}/delete", Administrator, deleteTopicHandler},
 
 	{"/member/{username}", Everyone, memberInfoHandler},
 	{"/member/{username}/topics", Everyone, memberTopicsHandler},

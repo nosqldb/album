@@ -74,9 +74,9 @@ func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url strin
 
 	query.(*mgo.Query).All(&topics)
 
-	var linkExchanges []Link
+	var links []Link
 	c = handler.DB.C(LINKS)
-	c.Find(bson.M{"is_on_home": true}).All(&linkExchanges)
+	c.Find(bson.M{"is_on_home": true}).All(&links)
 
 	topics = append(topTopics, topics...)
 
@@ -112,7 +112,7 @@ func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url strin
 		"cities":        hotCities,
 		"status":        status,
 		"topics":        topics,
-		"linkExchanges": linkExchanges,
+		"links":         links,
 		"pagination":    pagination,
 		"page":          page,
 		"active":        "topic",
@@ -429,7 +429,7 @@ func deleteTopicHandler(handler *Handler) {
 	topic := Topic{}
 
 	err := c.Find(bson.M{"_id": topicId}).One(&topic)
-
+	
 	if err != nil {
 		fmt.Println("deleteTopic:", err.Error())
 		return
@@ -446,13 +446,13 @@ func deleteTopicHandler(handler *Handler) {
 	//删除评论
 	c = handler.DB.C(COMMENTS)
 	if topic.CommentCount > 0 {
-		c.Remove(bson.M{"contentid": topic.Id_})
+		c.Remove(bson.M{"topicid": topic.Id_})
 	}
 
 	// 删除Topic记录
 	c = handler.DB.C(TOPICS)
 	c.Remove(bson.M{"_id": topic.Id_})
-
+	
 	http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
 }
 
