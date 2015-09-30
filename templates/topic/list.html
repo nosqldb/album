@@ -13,7 +13,7 @@
 	{{$creater := .Creater $.db}}
 	{{$node := .Node $.db}}
 	<dd>
-      <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{$creater.AvatarImgSrc 48}}" class="img-rounded" alt="{{$creater.Username}}"></a>
+      <a href="/user/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{$creater.AvatarImgSrc 48}}" class="img-rounded" alt="{{$creater.Username}}"></a>
 	  {{if .CommentCount}}
 	  <a class="badge pull-right" href="/p/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 	  {{end}}
@@ -21,10 +21,10 @@
 	  <div class="space"></div>
 	  <div class="info" style="margin-left:60px;">
 		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
-		<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+		<a href="/user/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 		{{if .CommentCount}}
 		{{$latestReplier := .LatestReplier $.db}}
-		{{formattime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
+		{{formattime .LatestRepliedAt}} • 最后回复来自 <a href="/user/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
 		{{else}}
 		{{formattime .CreatedAt}}
 		{{end}}

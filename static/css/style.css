@@ -316,11 +316,11 @@ a.remove {
 	margin-bottom: 4px;
 }
 
-ul.members {
+ul.users {
 	list-style: none;
 }
 
-ul.members li {
+ul.users li {
 	float: left;
 	width: 110px;
 	height: 68px;
@@ -329,7 +329,7 @@ ul.members li {
 	margin-bottom: 20px;
 }
 
-ul.members li a {
+ul.users li a {
 	display: block;
 }
 

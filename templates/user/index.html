@@ -8,21 +8,21 @@
 {{end}}
 {{define "Content"}}
 	<div class="alert alert-info" align="right">
-		已有 {{.membersCount}} 位会员加入。
+		已有 {{.usersCount}} 位会员加入。
 	</div>
 	<div class="content">
 		<h3><small>新加入会员</small></h3>
-		<ul class="members clearfix">
-			{{range .newestMembers}}
+		<ul class="users clearfix">
+			{{range .newestUsers}}
 			<li>
-			  <a href="/member/{{.Username}}">
+			  <a href="/user/{{.Username}}">
 				<img src="{{.AvatarImgSrc 48}}" class="img-rounded">
 			  </a>
-				<a href="/member/{{.Username}}">{{.Username}}</a>
+				<a href="/user/{{.Username}}">{{.Username}}</a>
 			</li>
 			{{end}}
 		</ul>
-		<a href="/members/all" class="pull-right">所有会员</a>
+		<a href="/users/all" class="pull-right">所有会员</a>
 		<div class="clearfix"></div>
 	</div>
 {{end}}

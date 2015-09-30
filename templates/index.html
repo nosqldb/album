@@ -29,7 +29,7 @@
 	{{$creater := .Creater $.db}}
 	{{$node := .Node $.db}}
 	<dd>
-      <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
+      <a href="/user/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
 		<img class="img-rounded" src="{{$creater.AvatarImgSrc 48}}" alt="{{$creater.Username}}">
 	  </a>
 	  {{if .CommentCount}}
@@ -39,10 +39,10 @@
 	  <div class="space"></div>
 	  <div class="info" style="margin-left:60px">
 		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
-		<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+		<a href="/user/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 		{{if .CommentCount}}
 		{{$latestReplier := .LatestReplier $.db}}
-		<time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{formatdatetime .LatestRepliedAt}}">{{formattime .LatestRepliedAt}}</time> • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
+		<time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{formatdatetime .LatestRepliedAt}}">{{formattime .LatestRepliedAt}}</time> • 最后回复来自 <a href="/user/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
 		{{else}}
 		<time datetime="{{formatdatetime .CreatedAt}}" title="{{formatdatetime .CreatedAt}}">{{formattime .CreatedAt}}</time>
 		{{end}}
@@ -70,7 +70,7 @@
   </div>
   <div class="panel-body">
 	{{range .cities}}
-	<a href="/members/city/{{.Name}}" class="btn">{{.Name}}</a>
+	<a href="/users/city/{{.Name}}" class="btn">{{.Name}}</a>
 	{{end}}
   </div>
 </div>
@@ -87,7 +87,7 @@
 	  <!--
 	  {{.utils.News .username .db}}
 	  <hr>
-	  <a href="/member/{{.username}}/collect?p=1">收藏</a>-->
+	  <a href="/user/{{.username}}/collect?p=1">收藏</a>-->
 	  {{else}}
 
 	  <h4><small>致力于打造一个国内NoSQL数据库交流和分享的地方</small></h4>

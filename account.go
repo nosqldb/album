@@ -424,7 +424,7 @@ func followHandler(handler *Handler) {
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$push": bson.M{"fans": currUser.Username}})
 	c.Update(bson.M{"_id": currUser.Id_}, bson.M{"$push": bson.M{"follow": user.Username}})
 
-	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/user/"+user.Username, http.StatusFound)
 }
 
 func unfollowHandler(handler *Handler) {
@@ -456,7 +456,7 @@ func unfollowHandler(handler *Handler) {
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$pull": bson.M{"fans": currUser.Username}})
 	c.Update(bson.M{"_id": currUser.Id_}, bson.M{"$pull": bson.M{"follow": user.Username}})
 
-	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/user/"+user.Username, http.StatusFound)
 }
 
 // URL: /forgot_password

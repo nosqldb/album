@@ -4,7 +4,7 @@
 <ul class="breadcrumb">
   <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
   {{if .city}}
-  <li><a href="/members/all">所有会员</a></li>
+  <li><a href="/users/all">所有会员</a></li>
   <li class="active">{{.city}}</li>
   {{else}}
   <li class="active">所有会员</li>
@@ -14,13 +14,13 @@
 {{define "Content"}}
 <div class="content">
   <h3><small>{{if .city}}{{.city}}的{{end}}所有会员</small></h3>
-  <ul class="members clearfix">
-	{{range .members}}
+  <ul class="users clearfix">
+	{{range .users}}
 	<li>
-	  <a href="/member/{{.Username}}">
+	  <a href="/user/{{.Username}}">
 		<img src="{{.AvatarImgSrc 48}}" class="img-rounded">
 	  </a>
-	  <a href="/member/{{.Username}}">{{.Username}}</a>
+	  <a href="/user/{{.Username}}">{{.Username}}</a>
 	</li>
 	{{end}}
   </ul>

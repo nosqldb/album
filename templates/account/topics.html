@@ -3,7 +3,7 @@
 {{define "Breadcrumb"}}
 <ul class="breadcrumb">
   <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-  <li><a href="/member/{{.user.Username}}">{{.user.Username}}</a></li>
+  <li><a href="/user/{{.user.Username}}">{{.user.Username}}</a></li>
   <li class="active">全部主题</li>
 </ul>
 {{end}}
@@ -25,7 +25,7 @@
 	  <div class="space"></div>
 	  <span>
 		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
-		<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+		<a href="/user/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 		{{formattime .CreatedAt}}
 	  </span>
 	  <div class="clearfix"></div>

@@ -39,7 +39,7 @@ function createEditorMd(divId, submitId, markdown) {
 }
 
 $(document).ready(function(){
-	editormd.urls.atLinkBase = "/member/";
+	editormd.urls.atLinkBase = "/user/";
 
     $("[data-toggle=popover]").popover();
 

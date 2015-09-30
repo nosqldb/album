@@ -28,24 +28,24 @@ func returnJson(w http.ResponseWriter, input interface{}) {
 }
 
 // 显示最新加入的会员
-// URL: /members
-func membersHandler(handler *Handler) {
+// URL: /users
+func usersHandler(handler *Handler) {
 	c := handler.DB.C(USERS)
-	var newestMembers []User
-	c.Find(nil).Sort("-joinedat").Limit(40).All(&newestMembers)
+	var newestUsers []User
+	c.Find(nil).Sort("-joinedat").Limit(40).All(&newestUsers)
 
-	membersCount, _ := c.Find(nil).Count()
+	usersCount, _ := c.Find(nil).Count()
 
-	handler.renderTemplate("member/index.html", BASE, map[string]interface{}{
-		"newestMembers": newestMembers,
-		"membersCount":  membersCount,
-		"active":        "members",
+	handler.renderTemplate("user/index.html", BASE, map[string]interface{}{
+		"newestUsers": newestUsers,
+		"usersCount":  usersCount,
+		"active":        "users",
 	})
 }
 
 // 显示所有会员
-// URL: /members/all
-func allMembersHandler(handler *Handler) {
+// URL: /users/all
+func allUsersHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -55,9 +55,9 @@ func allMembersHandler(handler *Handler) {
 
 	c := handler.DB.C(USERS)
 
-	pagination := NewPagination(c.Find(nil).Sort("joinedat"), "/members/all", 40)
+	pagination := NewPagination(c.Find(nil).Sort("joinedat"), "/users/all", 40)
 
-	var members []User
+	var users []User
 
 	query, err := pagination.Page(page)
 	if err != nil {
@@ -65,19 +65,19 @@ func allMembersHandler(handler *Handler) {
 		return
 	}
 
-	query.(*mgo.Query).All(&members)
+	query.(*mgo.Query).All(&users)
 
-	handler.renderTemplate("member/list.html", BASE, map[string]interface{}{
-		"members":    members,
-		"active":     "members",
+	handler.renderTemplate("user/list.html", BASE, map[string]interface{}{
+		"users":    users,
+		"active":     "users",
 		"pagination": pagination,
 		"page":       page,
 	})
 }
 
-// URL: /member/{username}
+// URL: /user/{username}
 // 显示用户信息
-func memberInfoHandler(handler *Handler) {
+func userInfoHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 	c := handler.DB.C(USERS)
@@ -93,13 +93,13 @@ func memberInfoHandler(handler *Handler) {
 
 	handler.renderTemplate("account/info.html", BASE, map[string]interface{}{
 		"user":   user,
-		"active": "members",
+		"active": "users",
 	})
 }
 
-// URL: /member/{username}/collect/
+// URL: /user/{username}/collect/
 // 用户收集的topic
-func memberTopicsCollectedHandler(handler *Handler) {
+func userTopicsCollectedHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
@@ -112,7 +112,7 @@ func memberTopicsCollectedHandler(handler *Handler) {
 	if err != nil {
 		message(handler, "会员未找到", "会员未找到", "error")
 	}
-	pagination := NewPagination(user.TopicsCollected, "/member/"+username+"/collect", 3)
+	pagination := NewPagination(user.TopicsCollected, "/user/"+username+"/collect", 3)
 	collects, err := pagination.Page(page)
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
@@ -122,13 +122,13 @@ func memberTopicsCollectedHandler(handler *Handler) {
 		"collects":   collects,
 		"pagination": pagination,
 		"page":       page,
-		"active":     "members",
+		"active":     "users",
 	})
 }
 
-// URL: /member/{username}/topics
+// URL: /user/{username}/topics
 // 用户发表的所有主题
-func memberTopicsHandler(handler *Handler) {
+func userTopicsHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -150,7 +150,7 @@ func memberTopicsHandler(handler *Handler) {
 
 	c = handler.DB.C("contents")
 
-	pagination := NewPagination(c.Find(bson.M{"content.createdby": user.Id_}).Sort("-latestrepliedat"), "/member/"+username+"/topics", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"content.createdby": user.Id_}).Sort("-latestrepliedat"), "/user/"+username+"/topics", PerPage)
 
 	var topics []Topic
 
@@ -168,13 +168,13 @@ func memberTopicsHandler(handler *Handler) {
 		"topics":     topics,
 		"pagination": pagination,
 		"page":       page,
-		"active":     "members",
+		"active":     "users",
 	})
 }
 
-// /member/{username}/replies
+// /user/{username}/replies
 // 用户的所有回复
-func memberRepliesHandler(handler *Handler) {
+func userRepliesHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -203,7 +203,7 @@ func memberRepliesHandler(handler *Handler) {
 
 	c = handler.DB.C(COMMENTS)
 
-	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_}).Sort("-createdat"), "/user/"+username+"/replies", PerPage)
 
 	query, err := pagination.Page(page)
 
@@ -214,12 +214,12 @@ func memberRepliesHandler(handler *Handler) {
 		"pagination": pagination,
 		"page":       page,
 		"replies":    replies,
-		"active":     "members",
+		"active":     "users",
 	})
 }
 
-// URL: /member/{username}/clear/{t}
-func memmberNewsClear(handler *Handler) {
+// URL: /user/{username}/clear/{t}
+func userNewsClear(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 	t := vars["t"]
@@ -254,8 +254,8 @@ func memmberNewsClear(handler *Handler) {
 	returnJson(handler.ResponseWriter, res)
 }
 
-// URL: /member/{username}/comments
-func memmberNewsHandler(handler *Handler) {
+// URL: /user/{username}/comments
+func userNewsHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
@@ -278,18 +278,18 @@ func memmberNewsHandler(handler *Handler) {
 		"comments": user.RecentReplies,
 		"ats":      user.RecentAts,
 
-		"active": "members",
+		"active": "users",
 	})
 }
 
-// URL: /member/{username}/comments
-func memberAtsHandler(handler *Handler) {
+// URL: /user/{username}/comments
+func userAtsHandler(handler *Handler) {
 	return
 }
 
-// URL: /members/city/{cityName}
+// URL: /users/city/{cityName}
 // 同城会员
-func membersInTheSameCityHandler(handler *Handler) {
+func usersInTheSameCityHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -301,9 +301,9 @@ func membersInTheSameCityHandler(handler *Handler) {
 
 	c := handler.DB.C(USERS)
 
-	pagination := NewPagination(c.Find(bson.M{"location": cityName}).Sort("joinedat"), "/members/city/"+cityName, 40)
+	pagination := NewPagination(c.Find(bson.M{"location": cityName}).Sort("joinedat"), "/users/city/"+cityName, 40)
 
-	var members []User
+	var users []User
 
 	query, err := pagination.Page(page)
 	if err != nil {
@@ -311,11 +311,11 @@ func membersInTheSameCityHandler(handler *Handler) {
 		return
 	}
 
-	query.(*mgo.Query).All(&members)
+	query.(*mgo.Query).All(&users)
 
-	handler.renderTemplate("member/list.html", BASE, map[string]interface{}{
-		"members":    members,
-		"active":     "members",
+	handler.renderTemplate("user/list.html", BASE, map[string]interface{}{
+		"users":    users,
+		"active":     "users",
 		"pagination": pagination,
 		"page":       page,
 		"city":       cityName,

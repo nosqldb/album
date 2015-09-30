@@ -21,14 +21,14 @@ var testParam func() = func() {}
 
 type City struct {
 	Name        string `bson:"_id"`
-	MemberCount int    `bson:"count"`
+	UserCount int    `bson:"count"`
 }
 
 type ByCount []City
 
 func (a ByCount) Len() int           { return len(a) }
 func (a ByCount) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByCount) Less(i, j int) bool { return a[i].MemberCount > a[j].MemberCount }
+func (a ByCount) Less(i, j int) bool { return a[i].UserCount > a[j].UserCount }
 
 func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url string, subActive string) {
 	page, err := getPage(handler.Request)
@@ -415,7 +415,7 @@ func collectTopicHandler(handler *Handler) {
 	user.TopicsCollected = append(user.TopicsCollected, CollectTopic{topicId, t})
 	c := handler.DB.C(USERS)
 	c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
-	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect?p=1", http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/user/"+user.Username+"/collect?p=1", http.StatusFound)
 }
 
 // URL: /p/{topicId}/delete

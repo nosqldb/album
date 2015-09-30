@@ -37,7 +37,7 @@
   	  {{end}}
   	</div>
 	  <div>
-	    由 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{formattime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
+	    由 <a href="/user/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{formattime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
 	  </div>
     <div class="clearfix"></div>
   </div>
@@ -59,7 +59,7 @@
 	{{range $index, $reply := $topic.Comments .db}}
 	{{$commenter := .Creater $.db}}
 	<dd id="{{.Id_.Hex}}">
-      <a href="/member/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;">
+      <a href="/user/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;">
 		<img class="img-rounded" src="{{$commenter.AvatarImgSrc 48}}" alt="{{$commenter.Username}}">
 	  </a>
 	  <div class="info">
@@ -72,7 +72,7 @@
 		</div>
 		{{end}}
 		{{end}}
-		<a href="/member/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> •
+		<a href="/user/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> •
 		{{formattime .CreatedAt}}
 	  </div>
 	  <div class="space"></div>

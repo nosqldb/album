@@ -46,8 +46,8 @@ func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
 	c.Find(bson.M{"username": username}).One(&user)
 
 	format := `<div>
-        <a href="/member/%s"><img class="gravatar img-rounded" src="%s" class="gravatar"></a>
-        <h4><a href="/member/%s">%s</a><br><small>%s</small></h4>
+        <a href="/user/%s"><img class="gravatar img-rounded" src="%s" class="gravatar"></a>
+        <h4><a href="/user/%s">%s</a><br><small>%s</small></h4>
 	<div class="clearfix">
 	</div>
     </div>`
@@ -62,9 +62,9 @@ func (u *Utils) News(username string, db *mgo.Database) template.HTML {
 	c.Find(bson.M{"username": username}).One(&user)
 	format := `<div>
 		<hr>
-		<a href="/member/%s/news#topic">新回复 <span class="badge pull-right">%d</span></a>
+		<a href="/user/%s/news#topic">新回复 <span class="badge pull-right">%d</span></a>
 		<br>
-		<a href="/member/%s/news#at">AT<span class="badge pull-right">%d</span></a>
+		<a href="/user/%s/news#at">AT<span class="badge pull-right">%d</span></a>
 	</div>
 	`
 	return template.HTML(fmt.Sprintf(format, username, len(user.RecentReplies), username, len(user.RecentAts)))

@@ -33,7 +33,7 @@
 	{{if $user.Location}}
 	<li>
 	  <i class="fa fa-map-marker"></i>
-	  <a href="/members/city/{{$user.Location}}">{{$user.Location}}</a>
+	  <a href="/users/city/{{$user.Location}}">{{$user.Location}}</a>
 	</li>
 	{{end}}
 	{{if $user.Website}}
@@ -69,7 +69,7 @@
 	{{$creater := .Creater $.db}}
 	{{$node := .Node $.db}}
 	<dd>
-	  <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
+	  <a href="/user/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
 		<img src="{{$creater.AvatarImgSrc 48}}" class="img-rounded">
 	  </a>
 	  {{if .CommentCount}}
@@ -79,11 +79,11 @@
 	  <div class="space"></div>
 	  <div class="info">
 		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
-		<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+		<a href="/user/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 		{{if .CommentCount}}
 		{{$latestReplier := .LatestReplier $.db}}
 		{{formattime .LatestRepliedAt}} •
-		最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
+		最后回复来自 <a href="/user/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
 		{{else}}
 		{{formattime .CreatedAt}}
 		{{end}}
@@ -93,7 +93,7 @@
 	{{end}}
   </dl>
   {{if len ($user.LatestTopics .db)}}
-  <a href="/member/{{$user.Username}}/topics">{{$user.Username}} 创建的更多主题</a>
+  <a href="/user/{{$user.Username}}/topics">{{$user.Username}} 创建的更多主题</a>
   {{end}}
 </div>
 <div class="content">
@@ -104,7 +104,7 @@
   {{$creater := $topic.Creater $.db}}
   <div class="reply">
 	<span>
-	  回复了 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/p/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
+	  回复了 <a href="/user/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/p/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
 	  <span class="pull-right">{{formattime .CreatedAt}}</span>
 	</span>
 	<div>
@@ -113,7 +113,7 @@
   </div>
   {{end}}
   {{if len ($user.LatestReplies .db)}}
-  <a href="/member/{{$user.Username}}/replies">{{$user.Username}} 创建的更多回复</a>
+  <a href="/user/{{$user.Username}}/replies">{{$user.Username}} 创建的更多回复</a>
   {{end}}
 </div>
 {{end}}
