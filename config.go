@@ -27,6 +27,8 @@ type ConfigStruct struct {
 	StaticFileVersion          int    `json:"static_file_version"`
 	QiniuAccessKey             string `json:"qiniu_access_key"`
 	QiniuSecretKey             string `json:"qiniu_secret_key"`
+	QiniuBucket                string `json:"qiniu_bucket"`
+	QiniuDomain                string `json:"qiniu_domain"`
 	GoGetPath                  string `json:"go_get_path"`
 	PackagesDownloadPath       string `json:"packages_download_path"`
 	CookieSecure               bool   `json:"cookie_secure"`

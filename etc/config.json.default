@@ -13,6 +13,8 @@
 	"analytics_file": "",
 	"qiniu_access_key": "",
 	"qiniu_secret_key": "",
+	"qiniu_bucket": "nosqldb",
+    "qiniu_domain": "http://7fvflv.com1.z0.glb.clouddn.com/",
 	"time_zone_offset": 8,
 	"static_file_version": 1,
 	"packages_download_path": "/tmp",

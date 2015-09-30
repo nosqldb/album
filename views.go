@@ -335,12 +335,12 @@ func uploadImageHandler(handler *Handler) {
 	// 上传到七牛
 	// 文件名：32位uuid+后缀组成
 	filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
-	key := "upload/image/" + filename
+	key := filename
 
 	ret := new(qiniuIo.PutRet)
 
 	var policy = rs.PutPolicy{
-		Scope: "nosqldb",
+		Scope: Config.QiniuBucket,
 	}
 
 	err = qiniuIo.Put(
@@ -365,6 +365,6 @@ func uploadImageHandler(handler *Handler) {
 
 	handler.renderJson(map[string]interface{}{
 		"success": 1,
-		"url":     "http://77fkk5.com1.z0.glb.clouddn.com/" + key,
+		"url":     Config.QiniuDomain + key,
 	})
 }
