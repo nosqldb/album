@@ -15,7 +15,6 @@
 	"qiniu_secret_key": "",
 	"qiniu_bucket": "nosqldb",
     "qiniu_domain": "http://7fvflv.com1.z0.glb.clouddn.com/",
-	"time_zone_offset": 8,
 	"static_file_version": 1,
 	"packages_download_path": "/tmp",
 	"github_auth_client_id": "3e2f7d7378289e2c9cc4",
