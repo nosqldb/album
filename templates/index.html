@@ -38,7 +38,7 @@
 	  <a href="/p/{{.Id_.Hex}}" class="title">{{truncate .Title 80 "..."}}{{if .IsTop}} <span class="glyphicon glyphicon-pushpin"></span>{{end}}</a>
 	  <div class="space"></div>
 	  <div class="info" style="margin-left:60px">
-		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+		<a class="label label-info" href="/node/{{$node.Id}}">{{$node.Name}}</a> •
 		<a href="/user/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 		{{if .CommentCount}}
 		{{$latestReplier := .LatestReplier $.db}}
@@ -60,7 +60,7 @@
   </div>
   <div class="panel-body">
 	{{range .nodes}}
-	<a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
+	<a href="/node/{{.Id}}" class="btn">{{.Name}}</a>
 	{{end}}
   </div>
 </div>

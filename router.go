@@ -101,7 +101,7 @@ var routes = []Route{
 	{"/user_center/change_password", Authenticated, changePasswordHandler},
 
 	{"/nodes", Everyone, nodesHandler},
-	{"/go/{node}", Everyone, topicInNodeHandler},
+	{"/node/{node}", Everyone, topicInNodeHandler},
 
 	{"/comment/{topicId:[0-9a-f]{24}}", Authenticated, commentHandler},
 	{"/comment/{commentId:[0-9a-f]{24}}/delete", Administrator, deleteCommentHandler},

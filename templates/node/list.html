@@ -12,9 +12,9 @@
 			{{range .nodes}}
 			<dt>
 				{{if .TopicCount}}
-				<a class="badge pull-right" href="/go/{{.Id}}">{{.TopicCount}}</a>
+				<a class="badge pull-right" href="/node/{{.Id}}">{{.TopicCount}}</a>
 				{{end}}
-				<a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
+				<a href="/node/{{.Id}}" class="btn">{{.Name}}</a>
 			</dt>
 			<dd>{{.Description}}</dd>
 			{{end}}

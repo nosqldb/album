@@ -78,7 +78,7 @@
 	  <a href="/p/{{.Id_.Hex}}" class="title">{{.Title}}</a>
 	  <div class="space"></div>
 	  <div class="info">
-		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+		<a class="label label-info" href="/node/{{$node.Id}}">{{$node.Name}}</a> •
 		<a href="/user/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 		{{if .CommentCount}}
 		{{$latestReplier := .LatestReplier $.db}}
