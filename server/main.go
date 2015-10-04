@@ -5,6 +5,5 @@ import (
 )
 
 func main() {
-	go g.RssRefresh()
 	g.StartServer()
 }
