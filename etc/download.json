@@ -6,21 +6,15 @@
 			{
                 "filename": "mongodb-linux-x86_64-3.0.6.tgz",
                 "summary": "Linux x86 (tgz)",
-                "size": "82.9 MB",
+                "size": "39M MB",
                 "sha1": "0f2b23d5bcd6245db62017f8a931e0a5fb692b47",
                 "url": "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.0.6.tgz"
             }, {
-                "filename": "mongodb-osx-x86_64-3.0.6.tgz",
-                "summary": "OSX x86 (tgz)",
-                "size": "77.9 MB",
+                "filename": "mongodb-linux-x86_64-rhel70-3.0.6.tgz",
+                "summary": "RHEL 7 linux 64-bit",
+                "size": "48M MB",
                 "sha1": "a88da6f1edd8f6c999de7c61cb0a0f7aaf41d2b1",
-                "url": "https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.0.6.tgz"
-            }, {
-                "filename": "mongodb-sunos5-x86_64-3.0.6.tgz",
-                "summary": "Solaris x86 (tgz)",
-                "size": "83 MB",
-                "sha1": "11cca68952a940d89fd43f82615c685b946b0b5f",
-                "url": "https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-3.0.6.tgz"
+                "url": "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.0.6.tgz"
             }
         ]
 	}
