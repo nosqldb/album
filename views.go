@@ -256,8 +256,8 @@ func searchHandler(handler *Handler) {
 	var markdownConditions []bson.M
 
 	for _, keyword := range noSpaceKeywords {
-		titleConditions = append(titleConditions, bson.M{"content.title": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
-		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
+		titleConditions = append(titleConditions, bson.M{"title": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
+		markdownConditions = append(markdownConditions, bson.M{"markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
 	c := handler.DB.C(TOPICS)
