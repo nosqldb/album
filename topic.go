@@ -147,7 +147,7 @@ func newTopicHandler(handler *Handler) {
 	c := handler.DB.C(NODES)
 	c.Find(nil).All(&nodes)
 
-	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
+	var choices = []wtforms.Choice{wtforms.Choice{Value:"", Label:"选择节点"}} // 第一个选项为选择节点
 
 	for _, node := range nodes {
 		choices = append(choices, wtforms.Choice{Value: node.Id_.Hex(), Label: node.Name})

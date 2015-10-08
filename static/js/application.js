@@ -23,7 +23,7 @@ function createEditorMd(divId, submitId, markdown) {
         autoFocus: false,
         watch : false, 
         path: "http://77fkk5.com1.z0.glb.clouddn.com/static/lib/editor.md-1.5.0/lib/",
-        placeholder: "Markdown，提交前请查看预览格式是否正确",
+        placeholder: "Markdown,提交前请预览格式",
         toolbarIcons: function() {
           return ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "|", "watch", "preview", "fullscreen", "|", "help", "info"]
         },
