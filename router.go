@@ -109,8 +109,7 @@ var routes = []Route{
 
 	{"/topics/latest", Everyone, latestTopicsHandler},
 	{"/topics/no_reply", Everyone, noReplyTopicsHandler},
-	{"/topic/new", Authenticated, newTopicHandler},
-	{"/new/{node}", Authenticated, newTopicHandler},
+	{"/write", Authenticated, newTopicHandler},
 	{"/p/{topicId:[0-9a-f]{24}}", Everyone, showTopicHandler},
 	{"/p/{topicId:[0-9a-f]{24}}/edit", Authenticated, editTopicHandler},
 	{"/p/{topicId:[0-9a-f]{24}}/collect", Authenticated, collectTopicHandler},

@@ -29,7 +29,7 @@ func TestPermission(t *testing.T) {
 	}()
 	r := getRoute()
 	res := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", Config.Host+"/topic/new", nil)
+	req, err := http.NewRequest("GET", Config.Host+"/write", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -138,7 +138,7 @@ func noReplyTopicsHandler(handler *Handler) {
 	topicsHandler(handler, bson.M{"commentcount": 0}, "-createdat", "/topics/no_reply", "noReply")
 }
 
-// URL: /topic/new
+// URL: /write
 // 新建主题
 func newTopicHandler(handler *Handler) {
 	nodeId := mux.Vars(handler.Request)["node"]
