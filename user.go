@@ -148,9 +148,9 @@ func userTopicsHandler(handler *Handler) {
 		return
 	}
 
-	c = handler.DB.C("contents")
+	c = handler.DB.C(TOPICS)
 
-	pagination := NewPagination(c.Find(bson.M{"content.createdby": user.Id_}).Sort("-latestrepliedat"), "/user/"+username+"/topics", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_}).Sort("-latestrepliedat"), "/user/"+username+"/topics", PerPage)
 
 	var topics []Topic
 
