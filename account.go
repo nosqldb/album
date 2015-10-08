@@ -582,7 +582,7 @@ func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename strin
 	ret := new(qiniuIo.PutRet)
 
 	var policy = rs.PutPolicy{
-		Scope: "gopher",
+		Scope: Config.QiniuBucket,
 	}
 
 	err = qiniuIo.Put(
