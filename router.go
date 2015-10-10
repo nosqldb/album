@@ -119,7 +119,6 @@ var routes = []Route{
 	{"/unfollow/{username}", Authenticated, unfollowHandler},
 	{"/users", Everyone, usersHandler},
 	{"/users/all", Everyone, allUsersHandler},
-	{"/users/city/{cityName}", Everyone, usersInTheSameCityHandler},
 
 	{"/download", Everyone, downloadHandler},
 

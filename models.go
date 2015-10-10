@@ -73,7 +73,6 @@ type User struct {
 	Email           string //如果关联社区帐号,默认使用社区的邮箱
 	Avatar          string
 	Website         string
-	Location        string
 	Tagline         string
 	Bio             string
 	Twitter         string

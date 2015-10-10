@@ -133,7 +133,6 @@ func editUserInfoHandler(handler *Handler) {
 	profileForm := wtforms.NewForm(
 		wtforms.NewTextField("email", "电子邮件", user.Email, wtforms.Email{}),
 		wtforms.NewTextField("website", "个人网站", user.Website),
-		wtforms.NewTextField("location", "所在地", user.Location),
 		wtforms.NewTextField("tagline", "签名", user.Tagline),
 		wtforms.NewTextArea("bio", "个人简介", user.Bio),
 		wtforms.NewTextField("github_username", "GitHub用户名", user.GitHubUsername),

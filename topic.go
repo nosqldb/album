@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"sort"
 	"time"
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
@@ -18,17 +17,6 @@ import (
 
 //  用于测试
 var testParam func() = func() {}
-
-type City struct {
-	Name        string `bson:"_id"`
-	UserCount int    `bson:"count"`
-}
-
-type ByCount []City
-
-func (a ByCount) Len() int           { return len(a) }
-func (a ByCount) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByCount) Less(i, j int) bool { return a[i].UserCount > a[j].UserCount }
 
 func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url string, subActive string) {
 	page, err := getPage(handler.Request)
@@ -80,36 +68,8 @@ func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url strin
 
 	topics = append(topTopics, topics...)
 
-	c = handler.DB.C(USERS)
-
-	var cities []City
-	c.Pipe([]bson.M{bson.M{
-		"$group": bson.M{
-			"_id":   "$location",
-			"count": bson.M{"$sum": 1},
-		},
-	}}).All(&cities)
-
-	sort.Sort(ByCount(cities))
-
-	var hotCities []City
-
-	count := 0
-	for _, city := range cities {
-		if city.Name != "" {
-			hotCities = append(hotCities, city)
-
-			count += 1
-		}
-
-		if count == 10 {
-			break
-		}
-	}
-
 	handler.renderTemplate("index.html", BASE, map[string]interface{}{
 		"nodes":         nodes,
-		"cities":        hotCities,
 		"status":        status,
 		"topics":        topics,
 		"links":         links,

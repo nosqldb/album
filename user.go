@@ -286,38 +286,3 @@ func userNewsHandler(handler *Handler) {
 func userAtsHandler(handler *Handler) {
 	return
 }
-
-// URL: /users/city/{cityName}
-// 同城会员
-func usersInTheSameCityHandler(handler *Handler) {
-	page, err := getPage(handler.Request)
-
-	if err != nil {
-		message(handler, "页码错误", "页码错误", "error")
-		return
-	}
-
-	cityName := mux.Vars(handler.Request)["cityName"]
-
-	c := handler.DB.C(USERS)
-
-	pagination := NewPagination(c.Find(bson.M{"location": cityName}).Sort("joinedat"), "/users/city/"+cityName, 40)
-
-	var users []User
-
-	query, err := pagination.Page(page)
-	if err != nil {
-		message(handler, "页码错误", "页码错误", "error")
-		return
-	}
-
-	query.(*mgo.Query).All(&users)
-
-	handler.renderTemplate("user/list.html", BASE, map[string]interface{}{
-		"users":    users,
-		"active":     "users",
-		"pagination": pagination,
-		"page":       page,
-		"city":       cityName,
-	})
-}
