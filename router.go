@@ -62,8 +62,6 @@ var routes = []Route{
 	{"/admin", Administrator, adminHandler},
 	{"/admin/nodes", Administrator, adminListNodesHandler},
 	{"/admin/node/new", Administrator, adminNewNodeHandler},
-	{"/admin/site_categories", Administrator, adminListSiteCategoriesHandler},
-	{"/admin/site_category/new", Administrator, adminNewSiteCategoryHandler},
 	{"/admin/users", Administrator, adminListUsersHandler},
 	{"/admin/user/{userId}/activate", Administrator, adminActivateUserHandler},
 	{"/admin/links", Administrator, adminListLinksHandler},
@@ -74,10 +72,6 @@ var routes = []Route{
 	{"/admin/ad/new", Administrator, adminNewAdHandler},
 	{"/admin/ad/{id:[0-9a-f]{24}}/delete", Administrator, adminDeleteAdHandler},
 	{"/admin/ad/{id:[0-9a-f]{24}}/edit", Administrator, adminEditAdHandler},
-	{"/admin/book/new", Administrator, newBookHandler},
-	{"/admin/books", Administrator, listBooksHandler},
-	{"/admin/book/{id}/edit", Administrator, editBookHandler},
-	{"/admin/book/{id}/delete", Administrator, deleteBookHandler},
 	{"/admin/top/topics", Administrator, listTopTopicsHandler},
 	{"/admin/topic/{id:[0-9a-f]{24}}/cancel/top", Administrator, cancelTopTopicHandler},
 	{"/admin/topic/{id:[0-9a-f]{24}}/set/top", Administrator, setTopTopicHandler},
@@ -126,14 +120,6 @@ var routes = []Route{
 	{"/users", Everyone, usersHandler},
 	{"/users/all", Everyone, allUsersHandler},
 	{"/users/city/{cityName}", Everyone, usersInTheSameCityHandler},
-
-	{"/sites", Everyone, sitesHandler},
-	{"/site/new", Authenticated, newSiteHandler},
-	{"/site/{siteId:[0-9a-f]{24}}/edit", Authenticated, editSiteHandler},
-	{"/site/{siteId:[0-9a-f]{24}}/delete", Administrator, deleteSiteHandler},
-
-	{"/books", Everyone, booksHandler},
-	{"/book/{id}", Everyone, showBookHandler},
 
 	{"/download", Everyone, downloadHandler},
 

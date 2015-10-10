@@ -375,44 +375,6 @@ type SiteCategory struct {
 	Name string
 }
 
-// 分类下的所有站点
-func (sc *SiteCategory) Sites(db *mgo.Database) *[]Site {
-	var sites []Site
-	c := db.C(SITES)
-	c.Find(bson.M{"categoryid": sc.Id_}).All(&sites)
-
-	return &sites
-}
-
-// 站点
-type Site struct {
-	Id_        bson.ObjectId `bson:"_id"`
-	Url        string
-	CategoryId bson.ObjectId
-	Title        string
-	Markdown     string
-	CreatedAt    time.Time
-	CreatedBy    bson.ObjectId
-	UpdatedAt    time.Time
-	UpdatedBy    string
-}
-
-// 是否有权编辑主题
-func (t *Site) CanEdit(username string, db *mgo.Database) bool {
-	var user User
-	t_ := db.C(USERS)
-	err := t_.Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		return false
-	}
-
-	if user.IsSuperuser {
-		return true
-	}
-
-	return t.CreatedBy == user.Id_
-}
-
 // 评论
 type Comment struct {
 	Id_       bson.ObjectId `bson:"_id"`
@@ -474,18 +436,4 @@ type AD struct {
 	Name     string        `bson:"name"`
 	Code     string        `bson:"code"`
 	Index    int           `bons:"index"`
-}
-
-type Book struct {
-	Id_             bson.ObjectId `bson:"_id"`
-	Title           string        `bson:"title"`
-	Cover           string        `bson:"cover"`
-	Author          string        `bson:"author"`
-	Translator      string        `bson:"translator"`
-	Pages           int           `bson:"pages"`
-	Introduction    string        `bson:"introduction"`
-	Publisher       string        `bson:"publisher"`
-	Language        string        `bson:"language"`
-	PublicationDate string        `bson:"publication_date"`
-	ISBN            string        `bson:"isbn"`
 }
