@@ -9,24 +9,24 @@ import (
 	. "github.com/nosqldb/G/crypto"
 )
 
-// URL: /user_center
+// URL: /setting
 // 用户中心首页
 func userCenterHandler(handler *Handler) {
-	handler.renderTemplate("user_center/dashboard.html", BASE, map[string]interface{}{
+	handler.renderTemplate("setting/dashboard.html", BASE, map[string]interface{}{
 		"active": "dashboard",
 	})
 }
 
-// URL: /user_center/change_avatar
+// URL: /setting/change_avatar
 // 修改头像,提交到七牛云存储
 func changeAvatarHandler(handler *Handler) {
-	handler.renderTemplate("user_center/change_avatar.html", BASE, map[string]interface{}{
+	handler.renderTemplate("setting/change_avatar.html", BASE, map[string]interface{}{
 		"active":         "change_avatar",
 		"defaultAvatars": defaultAvatars,
 	})
 }
 
-// URL: /user_center/upload_avatar
+// URL: /setting/upload_avatar
 // 上传头像
 func uploadAvatarHandler(handler *Handler) {
 	if handler.Request.Method != "POST" {
@@ -37,7 +37,7 @@ func uploadAvatarHandler(handler *Handler) {
 	if err != nil {
 		fmt.Println("changeAvatarHandler:", err.Error())
 
-		handler.renderTemplate("user_center/change_avatar.html", BASE, map[string]interface{}{
+		handler.renderTemplate("setting/change_avatar.html", BASE, map[string]interface{}{
 			"active":         "change_avatar",
 			"defaultAvatars": defaultAvatars,
 			"error":          "请选择图片上传",
@@ -51,7 +51,7 @@ func uploadAvatarHandler(handler *Handler) {
 	if fileSize > 500*1024 {
 		// > 500K
 		fmt.Printf("upload image size > 500K: %dK\n", fileSize/1024)
-		handler.renderTemplate("user_center/change_avatar.html", BASE, map[string]interface{}{
+		handler.renderTemplate("setting/change_avatar.html", BASE, map[string]interface{}{
 			"active":         "change_avatar",
 			"defaultAvatars": defaultAvatars,
 			"error":          "图片大小大于500K，请选择500K以内图片上传。",
@@ -68,7 +68,7 @@ func uploadAvatarHandler(handler *Handler) {
 
 	if err != nil {
 		fmt.Println(err)
-		handler.renderTemplate("user_center/change_avatar.html", BASE, map[string]interface{}{
+		handler.renderTemplate("setting/change_avatar.html", BASE, map[string]interface{}{
 			"active":         "change_avatar",
 			"defaultAvatars": defaultAvatars,
 			"error":          "图片上传失败",
@@ -81,10 +81,10 @@ func uploadAvatarHandler(handler *Handler) {
 	c := handler.DB.C(USERS)
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
-	handler.redirect("/user_center", http.StatusFound)
+	handler.redirect("/setting", http.StatusFound)
 }
 
-// URL: /user_center/choose_avatar
+// URL: /setting/choose_avatar
 // 选择默认头像
 func chooseAvatarHandler(handler *Handler) {
 	if handler.Request.Method != "POST" {
@@ -100,10 +100,10 @@ func chooseAvatarHandler(handler *Handler) {
 		c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": avatar}})
 	}
 
-	handler.redirect("/user_center", http.StatusFound)
+	handler.redirect("/setting", http.StatusFound)
 }
 
-// URl: /user_center/get_gravatar
+// URl: /setting/get_gravatar
 // 从 Gravatar 获取头像
 func setAvatarFromGravatar(handler *Handler) {
 	user, _ := currentUser(handler)
@@ -125,7 +125,7 @@ func setAvatarFromGravatar(handler *Handler) {
 	http.Redirect(handler.ResponseWriter, handler.Request, "/profile#avatar", http.StatusFound)
 }
 
-// URL /user_center/edit_info
+// URL /setting/edit_info
 // 修改用户资料
 func editUserInfoHandler(handler *Handler) {
 	user, _ := currentUser(handler)
@@ -149,7 +149,7 @@ func editUserInfoHandler(handler *Handler) {
 			if err == nil && result.Id_ != user.Id_ {
 				profileForm.AddError("email", "电子邮件地址已经被使用")
 
-				handler.renderTemplate("user_center/info_form.html", BASE, map[string]interface{}{
+				handler.renderTemplate("setting/info_form.html", BASE, map[string]interface{}{
 					"user":        user,
 					"profileForm": profileForm,
 					"active":      "edit_info",
@@ -166,19 +166,19 @@ func editUserInfoHandler(handler *Handler) {
 				"githubusername": profileForm.Value("github_username"),
 				"weibo":          profileForm.Value("weibo"),
 			}})
-			handler.redirect("/user_center/edit_info", http.StatusFound)
+			handler.redirect("/setting/edit_info", http.StatusFound)
 			return
 		}
 	}
 
-	handler.renderTemplate("user_center/info_form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("setting/info_form.html", BASE, map[string]interface{}{
 		"user":        user,
 		"profileForm": profileForm,
 		"active":      "edit_info",
 	})
 }
 
-// URL: /user_center/change_password
+// URL: /setting/change_password
 // 修改密码
 func changePasswordHandler(handler *Handler) {
 	user, _ := currentUser(handler)
@@ -206,7 +206,7 @@ func changePasswordHandler(handler *Handler) {
 		}
 	}
 
-	handler.renderTemplate("user_center/change_password.html", BASE, map[string]interface{}{
+	handler.renderTemplate("setting/change_password.html", BASE, map[string]interface{}{
 		"form":   form,
 		"active": "change_password",
 	})

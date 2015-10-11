@@ -19,13 +19,10 @@ const (
 	DefaultAvatar = "gopher_teal.jpg"
 
 	ADS                 = "ads"
-	BOOKS               = "books"
 	COMMENTS            = "comments"
 	TOPICS              = "topics"
 	NODES               = "nodes"
 	LINKS               = "links"
-	SITE_CATEGORIES     = "sitecategories"
-	SITES               = "sites"
 	STATUS              = "status"
 	USERS               = "users"
 	CODE                = "code"

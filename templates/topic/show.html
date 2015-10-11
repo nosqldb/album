@@ -1,5 +1,5 @@
 {{define "Title"}}{{.topic.Title}}{{end}}
-{{define "ContentWidth"}}8{{end}}
+{{define "ContentWidth"}}10{{end}}
 {{define "Breadcrumb"}}
 {{$topic := .utils.AssertTopic .topic}}
 {{$node := $topic.Node .db}}
@@ -150,40 +150,4 @@
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-{{define "RightSide"}}
-{{$topic := .utils.AssertTopic .topic}}
-{{$creater := $topic.Creater .db}}
-<div class="col-md-4">
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h3 class="panel-title">作者</h3>
-	</div>
-	<div class="panel-body">
-	  {{.utils.UserInfo $creater.Username .db}}
-	</div>
-  </div>
-  <a href="/write" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i>提笔写篇文章</a>
-  {{$ads := ads "frontpage" .db}}
-  {{if $ads}}
-  <div class="panel panel-default" id="ads">
-	<div class="panel-body">
-	  {{range $ads}}
-	  {{html .Code}}
-	  {{end}}
-	</div>
-  </div>
-  {{end}}
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h3 class="panel-title">作者其它话题</h3>
-	</div>
-	<div class="panel-body">
-	  <ul>
-		{{range $creater.LatestTopics .db}}
-		<li><a href="/p/{{.Id_.Hex}}">{{.Title}}</a></li>
-		{{end}}
-	  </ul>
-	</div>
-  </div>
-</div>
-{{end}}
+{{define "RightSide"}}{{end}}

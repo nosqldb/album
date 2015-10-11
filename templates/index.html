@@ -1,6 +1,6 @@
 {{define "Title"}}首页{{end}}
 {{define "Breadcrumb"}}{{end}}
-{{define "ContentWidth"}}8{{end}}
+{{define "ContentWidth"}}9{{end}}
 {{define "Content"}}
 <div class="content">
   <div>
@@ -69,29 +69,13 @@
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-<div class="col-md-4 sidebar">
-  <div class="panel panel-default">
-	<div class="panel-body">
-	  {{if .username}}
-	  {{.utils.UserInfo .username .db}}
-	  <!--
-	  {{.utils.News .username .db}}
-	  <hr>
-	  <a href="/user/{{.username}}/collect?p=1">收藏</a>-->
-	  {{else}}
+<div class="col-md-3 bgimage sidebar">
 
-	  <h4><small>致力于打造一个国内NoSQL数据库交流和分享的地方</small></h4>
-	  <hr>
-	  <div align="center">
-		<a href="/signup" class="btn btn-info">注册</a><!-- 或
-															<a href="/auth/login" class="btn btn-info">Github登录</a>-->
-	  </div>
-	  <div class="cleanfix"></div>
-	  <div align="center">已注册用户：<a href="/signin">登录</a></div>
-	  {{end}}
-	</div>
-  </div>
-  <a href="/write" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i>提笔写篇文章</a>
+   <div class="cover-img" style="background-image: url(http://7fvflv.com1.z0.glb.clouddn.com/side.png)"></div>
+   
+    <a href="/write" class="btn btn-success btn-lg btn-block" style="margin-top: 100px;"><i class="glyphicon glyphicon-edit"></i>提笔写篇文章</a>
+
+
   {{$ads := ads "frontpage" .db}}
   {{if $ads}}
   <div class="panel panel-default" id="ads">
@@ -101,55 +85,6 @@
 	  {{end}}
 	</div>
   </div>
-  {{end}}
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h3 class="panel-title">友情社区</h3>
-	</div>
-	<ul class="list-group">
-	  {{range .links}}
-	  <li class="list-group-item">
-		<a href="{{.URL}}" target="_blank" title="{{.Description}}">
-		  {{if .Logo}}
-		  <img src="{{.Logo}}" style="max-width: 224px;">
-		  {{else}}
-		  {{.Name}}
-		  {{end}}
-		</a>
-      </li>
-	  {{end}}
-	</ul>
-	<div class="panel-footer">
-	  <a href="/link" class="pull-right">更多</a>
-	  <div class="clearfix"></div>
-	</div>
-  </div>
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h3 class="panel-title">社区状态</h3>
-	</div>
-	<table width="100%" class="status">
-	  <thead>
-		<tr>
-		  <th>&nbsp;</th>
-		  <th></th>
-		</tr>
-	  </thead>
-	  <tbody>
-		<tr>
-		  <td class="status-label">注册会员</td>
-		  <td class="value">{{.status.UserCount}}</td>
-		</tr>
-		<tr>
-		  <td class="status-label">主题</td>
-		  <td class="value">{{.status.TopicCount}}</td>
-		</tr>
-		<tr>
-		  <td class="status-label">回复</td>
-		  <td class="value">{{.status.ReplyCount}}</td>
-		</tr>
-	  </tbody>
-	</table>
-  </div>
+  {{end}}  
 </div>
 {{end}}

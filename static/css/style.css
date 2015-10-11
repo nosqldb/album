@@ -123,17 +123,6 @@ hr {
 	margin: 9px 0;
 }
 
-table.status td.status-label {
-	color: #999;
-	width: 60px;
-	text-align: right;
-}
-
-table.status td.value {
-	font-weight: bold;
-	padding-left: 10px;
-}
-
 footer {
 	background-color: white;
 	margin: 0;
@@ -448,4 +437,15 @@ div.list-group-item.heading {
 
 .editormd-fullscreen {
     z-index: 100;
+}
+
+.cover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height:1530px;
+    background-position: center;
+    background-size: cover;
+	z-index: -1;
 }

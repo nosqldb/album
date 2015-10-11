@@ -3,7 +3,7 @@
 {{define "Breadcrumb"}}{{end}}
 {{define "Content"}}
 <div class="content">
-  <form action="/user_center/edit_info" method="post" class="form-horizontal" role="form">
+  <form action="/setting/edit_info" method="post" class="form-horizontal" role="form">
   	<div class="form-group">
   	  <label class="col-lg-2 control-label">用户名</label>
   	  <div class="col-lg-6">
@@ -66,6 +66,6 @@
 </div>
 {{end}}
 {{define "LeftSide"}}
-  {{include "user_center/sidebar.html" .}}
+  {{include "setting/sidebar.html" .}}
 {{end}}
 {{define "RightSide"}}{{end}}

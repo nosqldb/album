@@ -10,7 +10,7 @@
   </ul>
   <div class="tab-content">
     <div id="upload" class="tab-pane fade active in">
-      <form action="/user_center/upload_avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
+      <form action="/setting/upload_avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
 		    <div class="form-group">
 		      <label class="control-label col-lg-2" for="file">选择图片文件</label>
 		        <div class="col-lg-10">
@@ -26,7 +26,7 @@
       </form>
     </div>
     <div id="default" class="tab-pane fade row-fluid">
-      <form action="/user_center/choose_avatar" method="post">
+      <form action="/setting/choose_avatar" method="post">
         <div class="form-group">
           <ul class="list-inline">
             {{range .defaultAvatars}}
@@ -47,7 +47,7 @@
       </form>
     </div>
     <div id="gravatar" class="tab-pane fade">
-      <a href="/user_center/get_gravatar" class="btn btn-success">获取</a>
+      <a href="/setting/get_gravatar" class="btn btn-success">获取</a>
     </div>
   </div>
 </div>
@@ -60,6 +60,6 @@
 {{end}}
 
 {{define "LeftSide"}}
-  {{include "user_center/sidebar.html" .}}
+  {{include "setting/sidebar.html" .}}
 {{end}}
 {{define "RightSide"}}{{end}}
