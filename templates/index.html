@@ -39,7 +39,7 @@
 	  <div class="space"></div>
 	  <div class="info" style="margin-left:60px">
 		<a class="label label-info" href="/node/{{$node.Id}}">{{$node.Name}}</a> •
-		<a href="/user/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+		<a class="blue-link" href="/user/{{$creater.Username}}">{{$creater.Username}}</a> •
 		{{if .CommentCount}}
 		{{$latestReplier := .LatestReplier $.db}}
 		<time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{formatdatetime .LatestRepliedAt}}">{{formattime .LatestRepliedAt}}</time> • 最后回复来自 <a href="/user/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>

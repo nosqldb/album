@@ -24,11 +24,15 @@ ul.top a:hover {
 }
 
 a {
-	color: #778087;
+	color: #555555;
 }
 
 a:hover {
     color: #4d5256;
+}
+
+.blue-link {
+    color: #4094c7;
 }
 
 pre.prettyprint ol.linenums {
