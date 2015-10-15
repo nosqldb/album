@@ -102,6 +102,15 @@ var funcMaps = template.FuncMap{
 		} else if duration.Hours() < 24 {
 			return fmt.Sprintf("%.0f 小时前", duration.Hours())
 		}
+		if(now.Year() == t.Year() && now.YearDay()-t.YearDay() < 31) {
+		  return fmt.Sprintf("%v 天前", now.YearDay()-t.YearDay())
+		}
+		if(now.Year() == t.Year() && now.Month()-t.Month() < 12) {
+		  return fmt.Sprintf("%d 个月前", now.Month()-t.Month())
+		}	
+		if(now.Year() - t.Year() < 100) {
+		  return fmt.Sprintf("%d 年前", now.Year()-t.Year())
+		}		
 		return t.Format("2006-01-02 15:04")
 	},
 	"formatdatetime": func(t time.Time) string {
