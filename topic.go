@@ -99,7 +99,7 @@ func noReplyTopicsHandler(handler *Handler) {
 }
 
 // URL: /write
-// 新建主题
+// 发布主题
 func newTopicHandler(handler *Handler) {
 	nodeId := mux.Vars(handler.Request)["node"]
 
@@ -162,8 +162,8 @@ func newTopicHandler(handler *Handler) {
 
 	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
 		"form":   form,
-		"title":  "新建",
-		"action": "/topic/new",
+		"title":  "发布",
+		"action": "/write",
 		"active": "topic",
 	})
 }
