@@ -4,64 +4,78 @@
 {{define "Content"}}
 <div class="content">
   <div>
-	<h3 class="pull-left">欢迎</h3>
-	<ul class="nav nav-tabs pull-right">
-	  {{if eq .subActive "latestReply"}}
-	  <li class="active"><a href="javascript:;">最近回复</a></li>
-	  {{else}}
-	  <li><a href="/">最近回复</a></li>
-	  {{end}}
-	  {{if eq .subActive "latestCreate"}}
-	  <li class="active"><a href="javascript:;">最近发布</a></li>
-	  {{else}}
-	  <li><a href="/topics/latest">最近发布</a></li>
-	  {{end}}
-	  {{if eq .subActive "noReply"}}
-	  <li class="active"><a href="javascript:;">尚未回复</a></li>
-	  {{else}}
-	  <li><a href="/topics/no_reply">尚未回复</a></li>
-	  {{end}}
-	</ul>
+    <h3 class="pull-left">欢迎</h3>
+    <ul class="nav nav-tabs pull-right">
+      {{if eq .subActive "latestReply"}}
+      <li class="nav-item">
+        <a class="nav-link active" href="javascript:;">最近回复</a>
+      </li>
+      {{else}}
+      <li class="nav-item">
+        <a class="nav-link" href="/">最近回复</a>
+      </li>
+      {{end}}
+      {{if eq .subActive "latestCreate"}}
+      <li class="nav-item">
+        <a class="nav-link active" href="javascript:;">最近发布</a>
+      </li>
+      {{else}}
+      <li class="nav-item">
+        <a class="nav-link" href="/topics/latest">最近发布</a>
+      </li>
+      {{end}}
+      {{if eq .subActive "noReply"}}
+      <li class="nav-item">
+        <a class="nav-link active" href="javascript:;">尚未回复</a>
+      </li>
+      {{else}}
+      <li class="nav-item">
+        <a class="nav-link" href="/topics/no_reply">尚未回复</a>
+      </li> 
+      {{end}}
+    </ul>
   </div>
   <div class="clearfix"></div>
   <dl class="topics">
-	{{range .topics}}
-	{{$creater := .Creater $.db}}
-	{{$node := .Node $.db}}
-	<dd>
+    {{range .topics}}
+    {{$creater := .Creater $.db}}
+    {{$node := .Node $.db}}
+    <dd>
       <a href="/user/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
-		<img class="img-rounded" src="{{$creater.AvatarImgSrc 48}}" alt="{{$creater.Username}}">
-	  </a>
-	  {{if .CommentCount}}
-	  <a class="badge pull-right" href="/p/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
-	  {{end}}
-	  <a href="/p/{{.Id_.Hex}}" class="title">{{truncate .Title 80 "..."}}{{if .IsTop}} <span class="glyphicon glyphicon-pushpin"></span>{{end}}</a>
-	  <div class="space"></div>
-	  <div class="info" style="margin-left:60px">
-		<a class="label label-info" href="/node/{{$node.Id}}">{{$node.Name}}</a> •
-		<a class="blue-link" href="/user/{{$creater.Username}}">{{$creater.Username}}</a> •
-		{{if .CommentCount}}
-		{{$latestReplier := .LatestReplier $.db}}
-		<time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{formatdatetime .LatestRepliedAt}}">{{formattime .LatestRepliedAt}}</time> • 最后回复来自 <a href="/user/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
-		{{else}}
-		<time datetime="{{formatdatetime .CreatedAt}}" title="{{formatdatetime .CreatedAt}}">{{formattime .CreatedAt}}</time>
-		{{end}}
-	  </div>
-	  <div class="clear"></div>
-	</dd>
-	{{end}}
+        <img class="img-rounded" src="{{$creater.AvatarImgSrc 48}}" alt="{{$creater.Username}}">
+      </a>
+      {{if .CommentCount}}
+      <a class="label label-pill label-default pull-right" href="/p/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
+      {{end}}
+      <a href="/p/{{.Id_.Hex}}" class="title">{{truncate .Title 80 "..."}}{{if .IsTop}} <span class="fa fa-thumb-tack"></span>{{end}}</a>
+      <div class="space"></div>
+      <div class="info" style="margin-left:60px">
+        <a class="label label-info" href="/node/{{$node.Id}}">{{$node.Name}}</a> •
+        <a class="blue-link" href="/user/{{$creater.Username}}">{{$creater.Username}}</a> •
+        {{if .CommentCount}}
+        {{$latestReplier := .LatestReplier $.db}}
+        <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{formatdatetime .LatestRepliedAt}}">{{formattime .LatestRepliedAt}}</time> • 最后回复来自 <a href="/user/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
+        {{else}}
+        <time datetime="{{formatdatetime .CreatedAt}}" title="{{formatdatetime .CreatedAt}}">{{formattime .CreatedAt}}</time>
+        {{end}}
+      </div>
+      <div class="clear"></div>
+    </dd>
+    {{end}}
   </dl>
   <hr>
   {{.pagination.Html .page}}
 </div>
-<div class="panel panel-default">
-  <div class="panel-heading">
-	<h3 class="panel-title">节点导航</h3>
+<div class="card">
+  <div class="card-header">
+  节点导航
   </div>
-  <div class="panel-body">
-	{{range .nodes}}
-	<a href="/node/{{.Id}}" class="btn">{{.Name}}</a>
-	{{end}}
+  <div class="card-block">
+   <div class="card-text">
+    {{range .nodes}}
+    <a href="/node/{{.Id}}" class="btn">{{.Name}}</a>
+    {{end}}
+   </div>
   </div>
 </div>
 {{end}}
@@ -73,17 +87,17 @@
 
    <div class="cover-img" style="background-image: url(http://7fvflv.com1.z0.glb.clouddn.com/side.png)"></div>
    
-    <a href="/write" class="btn btn-success btn-lg btn-block" style="margin-top: 100px;"><i class="glyphicon glyphicon-edit"></i>提笔写篇文章</a>
+    <a href="/write" class="btn btn-success btn-lg btn-block" style="margin-top: 4em;"><i class="fa fa-pencil"></i>提笔写篇文章</a>
 
 
   {{$ads := ads "frontpage" .db}}
   {{if $ads}}
-  <div class="panel panel-default" id="ads">
-	<div class="panel-body">
-	  {{range $ads}}
-	  {{html .Code}}
-	  {{end}}
-	</div>
+  <div class="card" id="ads">
+    <div class="card-text">
+      {{range $ads}}
+      {{html .Code}}
+      {{end}}
+    </div>
   </div>
   {{end}}  
 </div>

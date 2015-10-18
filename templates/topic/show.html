@@ -4,7 +4,7 @@
 {{$topic := .utils.AssertTopic .topic}}
 {{$node := $topic.Node .db}}
 <ul class="breadcrumb">
-  <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+  <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
   <li><a href="/node/{{$node.Id}}">{{$node.Name}}</a></li>
 </ul>
 {{end}}
@@ -18,20 +18,20 @@
   	  {{if .username}}
           {{if .curr_user.IsSuperuser}}
   	      {{if $topic.IsTop}}
-  	        <a href="/admin/topic/{{$topic.Id_.Hex}}/cancel/top" class="btn btn-success" title="取消置顶"><i class="glyphicon glyphicon-pushpin"></i></a>
+  	        <a href="/admin/topic/{{$topic.Id_.Hex}}/cancel/top" class="btn btn-success" title="取消置顶"><i class="fa fa-thumb-tack"></i></a>
   	      {{else}}
-              <a href="/admin/topic/{{$topic.Id_.Hex}}/set/top" class="btn btn-default" title="置顶"><i class="glyphicon glyphicon-pushpin"></i></a>
+              <a href="/admin/topic/{{$topic.Id_.Hex}}/set/top" class="btn btn-default" title="置顶"><i class="fa fa-thumb-tack"></i></a>
   	      {{end}}
   	    {{end}}
   	    {{if $topic.CanEdit .username $.db}}
-            <a href="/p/{{$topic.Id_.Hex}}/edit" class="btn btn-default" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
+            <a href="/p/{{$topic.Id_.Hex}}/edit" class="btn btn-default" title="编辑"><i class="fa fa-edit"></i></a>
   	    {{end}}
   	    {{if $topic.CanDelete .username $.db}}
-  	    <a href="/p/{{$topic.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
+  	    <a href="/p/{{$topic.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="fa fa-times"></i></a>
   	    {{end}}
   	    {{if ne .username $creater.Username}}
   	      {{if $topic.CanCollect .username $.db}}
-  	        <a href="/p/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="glyphicon glyphicon-star-empty"></i></a>
+  	        <a href="/p/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="fa fa-star-o"></i></a>
   	      {{end}}
   	    {{end}}
   	  {{end}}
@@ -67,8 +67,8 @@
 		{{if $.username}}
 		{{if $reply.CanDeleteOrEdit $.username $.db}}
 		<div class="btn-group btn-group-xs pull-right" style="margin-right: 1em;">
-		  <a href="javascript:;" class="edit-comment btn btn-default" title="编辑" comment-id="{{.Id_.Hex}}"><i class="glyphicon glyphicon-edit"></i></a>
-		  <a href="/comment/{{.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确认删除该评论吗？');"><i class="glyphicon glyphicon-remove"></i></a>
+		  <a href="javascript:;" class="edit-comment btn btn-default" title="编辑" comment-id="{{.Id_.Hex}}"><i class="fa fa-pencil-square-o"></i></a>
+		  <a href="/comment/{{.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确认删除该评论吗？');"><i class="fa fa-times"></i></a>
 		</div>
 		{{end}}
 		{{end}}

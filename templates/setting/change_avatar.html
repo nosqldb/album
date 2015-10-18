@@ -4,30 +4,30 @@
 {{define "Content"}}
 <div class="content">
 	<ul class="nav nav-tabs" id="avatar-tab" style="margin-bottom: 15px;">
-    <li class="active"><a href="#upload">上传头像</a></li>
-    <li><a href="#default">选择默认头像</a></li>
-    <li><a href="#gravatar">从 Gravatar 获取</a></li>
+    <li class="nav-item"><a href="#upload" class="nav-link active">上传头像</a></li>
+    <li class="nav-item"><a href="#default" class="nav-link">选择默认头像</a></li>
+    <li class="nav-item"><a href="#gravatar" class="nav-link">从 Gravatar 获取</a></li>
   </ul>
   <div class="tab-content">
     <div id="upload" class="tab-pane fade active in">
       <form action="/setting/upload_avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
-		    <div class="form-group">
+		<fieldset class="form-group">
 		      <label class="control-label col-lg-2" for="file">选择图片文件</label>
 		        <div class="col-lg-10">
               <input type="file" name="file" id="file">
               <span class="help-block">支持 500K 以内的 jpg/png 文件</span>
             </div>
-        </div>
-        <div class="form-group">
+        </fieldset>
+        <fieldset class="form-group">
           <div class="col-lg-offset-2 col-lg-10">
             <button type="submit" class="btn btn-success">上传新头像</button>
           </div>
-        </div>
+        </fieldset>
       </form>
     </div>
     <div id="default" class="tab-pane fade row-fluid">
       <form action="/setting/choose_avatar" method="post">
-        <div class="form-group">
+        <fieldset class="form-group">
           <ul class="list-inline">
             {{range .defaultAvatars}}
               <li>
@@ -38,12 +38,12 @@
               </li>
             {{end}}
           </ul>
-          <div class="control-group">
+          <fieldset class="control-group">
             <div class="controls">
               <button type="submit" class="btn btn-success">选择头像</button>
             </div>
-          </div>
-        </div>
+          </fieldset>
+        </fieldset>
       </form>
     </div>
     <div id="gravatar" class="tab-pane fade">

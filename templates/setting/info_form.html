@@ -4,50 +4,50 @@
 {{define "Content"}}
 <div class="content">
   <form action="/setting/edit_info" method="post" class="form-horizontal" role="form">
-  	<div class="form-group">
+  	<fieldset class="form-group">
   	  <label class="col-lg-2 control-label">用户名</label>
   	  <div class="col-lg-6">
           <p class="form-control-static">{{.user.Username}}</p>
   	  </div>
-  	</div>
+  	</fieldset>
     {{$email := .profileForm.Field "email"}}
-    <div class="form-group">
+    <fieldset class="form-group">
       {{$email.RenderLabel `class="col-lg-2 control-label"`}}
       <div class="col-lg-10">
         {{$email.RenderInput `class="form-control"`}}
       </div>
-    </div>
+    </fieldset>
     {{$website := .profileForm.Field "website"}}
-    <div class="form-group">
+    <fieldset class="form-group">
       {{$website.RenderLabel `class="col-lg-2 control-label"`}}
       <div class="col-lg-10">
         {{$website.RenderInput `class="form-control"`}}
       </div>
-    </div>
+    </fieldset>
     {{$tagline := .profileForm.Field "tagline"}}
-    <div class="form-group">
+    <fieldset class="form-group">
       {{$tagline.RenderLabel `class="col-lg-2 control-label"`}}
       <div class="col-lg-10">
         {{$tagline.RenderInput `class="form-control"`}}
       </div>
-    </div>
+    </fieldset>
     {{$bio := .profileForm.Field "bio"}}
-    <div class="form-group">
+    <fieldset class="form-group">
       {{$bio.RenderLabel `class="col-lg-2 control-label"`}}
       <div class="col-lg-10">
         {{$bio.RenderInput `class="form-control"`}}
       </div>
-    </div>
+    </fieldset>
     <hr>
     {{$github_username := .profileForm.Field "github_username"}}
-    <div class="form-group">
+    <fieldset class="form-group">
       {{$github_username.RenderLabel `class="col-lg-2 control-label"`}}
       <div class="col-lg-10">
         {{$github_username.RenderInput `class="form-control"`}}
       </div>
-    </div>
+    </fieldset>
     {{$weibo := .profileForm.Field "weibo"}}
-    <div class="form-group">
+    <fieldset class="form-group">
       {{$weibo.RenderLabel `class="col-lg-2 control-label"`}}
       <div class="col-lg-10">
         <div class="input-group">
@@ -55,13 +55,13 @@
           {{$weibo.RenderInput `class="form-control"`}}
         </div>
       </div>
-    </div>
+    </fieldset>
 
-    <div class="form-group">
+    <fieldset class="form-group">
       <div class="col-lg-offset-2 col-lg-10">
         <input type="submit" class="btn btn-primary" value="保存设置">
       </div>
-    </div>
+    </fieldset>
   </form>
 </div>
 {{end}}

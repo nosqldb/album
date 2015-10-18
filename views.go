@@ -62,9 +62,9 @@ func (u *Utils) News(username string, db *mgo.Database) template.HTML {
 	c.Find(bson.M{"username": username}).One(&user)
 	format := `<div>
 		<hr>
-		<a href="/user/%s/news#topic">新回复 <span class="badge pull-right">%d</span></a>
+		<a href="/user/%s/news#topic">新回复 <span class="label label-pill label-default pull-right">%d</span></a>
 		<br>
-		<a href="/user/%s/news#at">AT<span class="badge pull-right">%d</span></a>
+		<a href="/user/%s/news#at">AT<span class="label label-pill label-default pull-right">%d</span></a>
 	</div>
 	`
 	return template.HTML(fmt.Sprintf(format, username, len(user.RecentReplies), username, len(user.RecentAts)))
@@ -91,11 +91,11 @@ func (u *Utils) RenderInput(form wtforms.Form, fieldStr string, inputAttrs ...st
 		errorClass = " has-error"
 	}
 
-	format := `<div class="form-group%s">
+	format := `<fieldset class="form-group%s">
         %s
         %s
         %s
-    </div>`
+    </fieldset>`
 
 	var inputAttrs2 []string = []string{`class="form-control"`}
 	inputAttrs2 = append(inputAttrs2, inputAttrs...)
@@ -119,12 +119,12 @@ func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inp
 	if field.HasErrors() {
 		errorClass = " has-error"
 	}
-	format := `<div class="form-group%s">
+	format := `<fieldset class="form-group%s">
         %s
-        <div class="col-lg-%d">
+        <fieldset class="col-lg-%d">
             %s%s
-        </div>
-    </div>`
+        </fieldset>
+    </fieldset>`
 	labelClass := fmt.Sprintf(`class="col-lg-%d control-label"`, labelWidth)
 
 	var inputAttrs2 []string = []string{`class="form-control"`}

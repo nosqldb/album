@@ -1,5 +1,5 @@
 function setToTop() {
-    $('body').append('<div id="toTop" title="回到顶部"><span class="glyphicon glyphicon-circle-arrow-up"></span></div>');
+    $('body').append('<div id="toTop" title="回到顶部"><span class="fa fa-arrow-circle-up"></span></div>');
     $(window).scroll(function() {
         if ($(this).scrollTop()) {
             $('#toTop').fadeIn();

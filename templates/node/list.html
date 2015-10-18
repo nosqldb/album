@@ -2,7 +2,7 @@
 {{define "ContentWidth"}}8{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+		<li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
 		<li class="active">所有节点</li>
 	</ul>
 {{end}}
@@ -12,7 +12,7 @@
 			{{range .nodes}}
 			<dt>
 				{{if .TopicCount}}
-				<a class="badge pull-right" href="/node/{{.Id}}">{{.TopicCount}}</a>
+				<a class="label label-pill label-default pull-right" href="/node/{{.Id}}">{{.TopicCount}}</a>
 				{{end}}
 				<a href="/node/{{.Id}}" class="btn">{{.Name}}</a>
 			</dt>

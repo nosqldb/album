@@ -317,7 +317,7 @@ func showTopicHandler(handler *Handler) {
 	})
 }
 
-// URL: /go/{node}
+// URL: /node/{node}
 // 列出节点下所有的主题
 func topicInNodeHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
