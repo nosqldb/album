@@ -98,7 +98,6 @@ dl.topics dd, dl.replies dd, dl#nodes dd {
 dl.topics .title {
 	font-size: 18px;
     font-weight: bold;
-	font-family: Georgia, 'Times New Roman'
     line-height: 1.5;
 }
 
@@ -145,12 +144,6 @@ header {
 	margin-bottom: 10px;
 }
 
-.brand {
-	float: left;
-	margin-top: 10px;
-	margin-right: 20px;
-}
-
 header .bar {
 	float: left;
 	margin-top: 10px;
@@ -162,48 +155,10 @@ header h1 {
 	line-height: 1.2em;
 }
 
-header nav {
-	padding: 54px 24px 0 0;
-}
-
-header nav li {
-	list-style-type: none;
-	float: left;
-	margin: 0 5px;
-	padding: 0;
-}
-
-header nav li a {
-	color: white;
-	background: #375EAB;
-	margin-right: 5px;
-	margin-bottom: 10px;
-	padding: 10px 20px;
-	text-decoration: none;
-	font-size: 16px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-}
-
-header nav li a:hover {
-	color: white;
-	text-decoration: none;
-}
 
 .login-form {
 	padding: 19px;
 	margin-bottom: 0px;
-}
-
-.well {
-	background: white;
-	border: 1px solid #DDD;
-	border-radius: 4px;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	-o-border-radius: 4px;
-	-khtml-border-radius: 4px;
 }
 
 #admin-sidebar {

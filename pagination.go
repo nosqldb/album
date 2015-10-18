@@ -10,7 +10,6 @@ import (
 	"html/template"
 	"math"
 	"strings"
-
 	"gopkg.in/mgo.v2"
 )
 
@@ -38,13 +37,13 @@ func (p *Pagination) Html(number int) template.HTML {
 
 	html := `<ul class="pager">`
 	if number > 1 {
-		html += fmt.Sprintf(`<li class="previous"><a href="%s%sp=%d">&larr; 上一页</a></li>`, p.url, linkFlag, number-1)
+		html += fmt.Sprintf(`<li class="pager-prev"><a href="%s%sp=%d">&larr; 上一页</a></li>`, p.url, linkFlag, number-1)
 	}
 
 	html += fmt.Sprintf(`<li class="number">%d/%d</li>`, number, pageCount)
 
 	if number < pageCount {
-		html += fmt.Sprintf(`<li class="next"><a href="%s%sp=%d">下一页 &rarr;</a></li>`, p.url, linkFlag, number+1)
+		html += fmt.Sprintf(`<li class="pager-next"><a href="%s%sp=%d">下一页 &rarr;</a></li>`, p.url, linkFlag, number+1)
 	}
 
 	return template.HTML(html)
