@@ -41,13 +41,13 @@
     {{$creater := .Creater $.db}}
     {{$node := .Node $.db}}
     <dd>
-      <a href="/user/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
+	  <a href="/user/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
         <img class="img-rounded" src="{{$creater.AvatarImgSrc 48}}" alt="{{$creater.Username}}">
       </a>
       {{if .CommentCount}}
       <a class="label label-pill label-default pull-right" href="/p/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
       {{end}}
-      <a href="/p/{{.Id_.Hex}}" class="title">{{truncate .Title 80 "..."}}{{if .IsTop}} <span class="fa fa-thumb-tack"></span>{{end}}</a>
+      <a href="/p/{{.Id_.Hex}}" class="title" >{{truncate .Title 80 "..."}}{{if .IsTop}} <span class="fa fa-thumb-tack"></span>{{end}}</a>
       <div class="space"></div>
       <div class="info" style="margin-left:60px">
         <a class="label label-info" href="/node/{{$node.Id}}">{{$node.Name}}</a> •
@@ -83,13 +83,49 @@
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-<div class="col-md-3 bgimage sidebar">
+<div class="col-md-3  sidebar">
+ <div class="card">
 
-   <div class="cover-img" style="background-image: url(http://7fvflv.com1.z0.glb.clouddn.com/side.png)"></div>
-   
-    <a href="/write" class="btn btn-success btn-lg btn-block" style="margin-top: 4em;"><i class="fa fa-pencil"></i>提笔写篇文章</a>
+	<div class="card-block">
+	  {{if .username}}
+	  {{.utils.UserInfo .username .db}}
+	  <!--
+	  {{.utils.News .username .db}}
+	  <hr>
+	  <a href="/user/{{.username}}/collect?p=1">收藏</a>-->
+	  {{else}}
+	  <h4><small>致力于打造一个国内NoSQL数据库交流和分享的地方</small></h4>
+	  <hr>
+	  <div align="center">
+		<a href="/signup" class="btn btn-info">注册</a><!-- 或
+															<a href="/auth/login" class="btn btn-info">Github登录</a>-->
+	  </div>
+	  <div class="cleanfix"></div>
+	  <div align="center">已注册用户：<a href="/signin">登录</a></div>
+	  {{end}}
+	</div>
+  </div>
+  <div class="card" >
+    <div class="card-block">
+	   <a href="/write" class="btn btn-success btn-lg btn-block" ><i class="fa fa-pencil"></i>提笔写篇文章</a>
+    </div>
+  </div>
+  
+  <div class="card" >
 
+   <div class="card-header">
+  节点导航
+  </div>
+   <div class="card-text">
+    {{range .nodes}}
+	 <ul class="list-group list-group-flush">
+        <a href="/node/{{.Id}}" class="btn">{{.Name}}</a>
+	 </ul>
+    {{end}}
+   </div>
+  </div>
 
+  <div class="card" >
   {{$ads := ads "frontpage" .db}}
   {{if $ads}}
   <div class="card" id="ads">
@@ -100,5 +136,7 @@
     </div>
   </div>
   {{end}}  
+  </div>
+  
 </div>
 {{end}}
