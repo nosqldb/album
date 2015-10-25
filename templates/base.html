@@ -25,24 +25,23 @@
                         {{html .Code}}
                     {{end}}
                 </div>
-                    <nav class="navbar navbar-light"  role="navigation" id="navbar" >
+                    <nav class="navbar navbar-light"   role="navigation" id="navbar" >
                        <a class="navbar-brand" href="/">
                            <img src="http://7fvflv.com1.z0.glb.clouddn.com/logo.png" alt="logo"/>
-                       </a>                 
-                        <ul class="nav navbar-nav" style="margin-top: 1em;">
-                          <form action="/search" class="form-inline navbar-form pull-left" method="get" role="search">
-                             <div class="form-group">
-                                <input name="q" type="text" class="form-control" placeholder="搜索">
-                             </div>
-                          </form> 
-                        </ul>
-                        <ul class="nav navbar-nav pull-right" id="menu">
+                       </a>  
+					    <ul class="nav navbar-nav pull-left" style="margin-top: 1em;" id="menu">
                             <li{{if eq .active "topic"}} class="nav-item active"{{end}} class="nav-item">
                               <a class="nav-link" href="/">首页</a>
                             </li>
-                            <li{{if eq .active "download"}} class="nav-item active"{{end}} class="nav-item">
+							<li{{if eq .active "download"}} class="nav-item active"{{end}} class="nav-item">
                               <a class="nav-link" href="/download">下载 </a>
                             </li>
+						</ul>
+
+                        <ul class="nav navbar-nav pull-right" style="margin-top: 1em;" id="menu">
+                            <li{{if eq .active "write"}} class="nav-item active"{{end}} class="nav-item">
+                              <a class="nav-link" href="/write"> 写文章 </a>
+                            </li>							
                         {{if .username}}
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
@@ -68,7 +67,13 @@
                         </li>   
                        {{end}}
                        </ul>
-
+                        <ul class="nav navbar-nav" style="margin-top: 1em;">
+                          <form action="/search" class="form-inline navbar-form pull-right" method="get" role="search">
+                             <div class="form-group">
+                                <input name="q" type="text" class="form-control" placeholder="搜索">
+                             </div>
+                          </form> 
+                        </ul>
                     </nav>
         </div>
     </header>
@@ -88,7 +93,7 @@
     <div class="container">
         <div class="row">
             {{template "LeftSide" .}}
-            <div class="col-md-{{template "ContentWidth"}}">
+            <div class="col-md-{{template "ContentWidth"}} ">
             {{template "Breadcrumb" .}}
             {{template "Content" .}}
             </div>
