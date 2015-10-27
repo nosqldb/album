@@ -160,7 +160,7 @@ func newTopicHandler(handler *Handler) {
 		}
 	}
 
-	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("topic/form.html", TOPICBASE, map[string]interface{}{
 		"form":   form,
 		"title":  "发布",
 		"action": "/write",
@@ -231,7 +231,7 @@ func editTopicHandler(handler *Handler) {
 		}
 	}
 
-	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("topic/form.html", TOPICBASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑",
 		"action": "/p/" + topicId + "/edit",
@@ -311,7 +311,7 @@ func showTopicHandler(handler *Handler) {
 		}
 	}
 
-	handler.renderTemplate("topic/show.html", BASE, map[string]interface{}{
+	handler.renderTemplate("topic/show.html", TOPICBASE, map[string]interface{}{
 		"topic":  topic,
 		"active": "topic",
 	})
@@ -353,7 +353,7 @@ func topicInNodeHandler(handler *Handler) {
 
 	query.(*mgo.Query).All(&topics)
 
-	handler.renderTemplate("/topic/list.html", BASE, map[string]interface{}{
+	handler.renderTemplate("/topic/list.html", TOPICBASE, map[string]interface{}{
 		"topics": topics,
 		"node":   node,
 		"active": "topic",
