@@ -62,6 +62,9 @@ dl.site dt {
 	background-color: #F9F9F9;
 }
 
+.navbar-top {
+	margin-top: 1em;
+}
 .sidebar-nav {
 	padding: 8px;
 }

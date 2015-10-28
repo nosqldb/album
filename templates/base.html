@@ -24,56 +24,53 @@
                         {{html .Code}}
                     {{end}}
                 </div>
-                    <nav class="navbar navbar-light"   role="navigation" id="navbar" >
-                       <a class="navbar-brand" href="/">
-                           <img src="http://7fvflv.com1.z0.glb.clouddn.com/logo.png" alt="logo"/>
-                       </a>  
-					    <ul class="nav navbar-nav pull-left" style="margin-top: 1em;" id="menu">
-                            <li{{if eq .active "topic"}} class="nav-item active"{{end}} class="nav-item">
-                              <a class="nav-link" href="/">首页</a>
-                            </li>
-							<li{{if eq .active "download"}} class="nav-item active"{{end}} class="nav-item">
-                              <a class="nav-link" href="/download">下载 </a>
-                            </li>
-						</ul>
+                    <a class="navbar-brand" href="/">
+                        <img src="http://7fvflv.com1.z0.glb.clouddn.com/logo.png" alt="logo"/>
+                    </a> 
+ 
+				    <ul class="nav navbar-nav pull-left navbar-top" id="menu">
+                        <li{{if eq .active "topic"}} class="nav-item active"{{end}} class="nav-item">
+                           <a class="nav-link" href="/">首页</a>
+                        </li>
+				        <li{{if eq .active "download"}} class="nav-item active"{{end}} class="nav-item">
+                           <a class="nav-link" href="/download">下载 </a>
+                        </li>
+				    </ul>
 
-                        <ul class="nav navbar-nav pull-right" style="margin-top: 1em;" id="menu">
-                            <li{{if eq .active "write"}} class="nav-item active"{{end}} class="nav-item">
-                              <a class="nav-link" href="/write"> 写文章 </a>
-                            </li>							
-                        {{if .username}}
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                我的空间
-                                <b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="/user/{{.username}}"><i class="fa fa-user"></i> 我的主页</a></li>
-                                <li><a href="/setting"><i class="fa fa-cog"></i> 设置</a></li>
-                                {{if .isSuperUser}}
-                                    <li><a href="/admin"><i class="fa fa-wrench"></i> 管理</a></li>
-                                {{end}}
-                                <li class="divider"></li>
-                                <li><a href="/signout"><i class="fa fa-sign-out"></i> 登出</a></li>
-                            </ul>
-                        </li>
-                        {{else}}
-                        <li class="nav-item">
-                           <a class="nav-link" href="/signin">登录</a> 
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="/signup">注册</a>
-                        </li>   
-                       {{end}}
-                       </ul>
-                        <ul class="nav navbar-nav" style="margin-top: 1em;">
-                          <form action="/search" class="form-inline navbar-form pull-right" method="get" role="search">
-                             <div class="form-group">
-                                <input name="q" type="text" class="form-control" placeholder="搜索">
-                             </div>
-                          </form> 
-                        </ul>
-                    </nav>
+                    <ul class="nav navbar-nav pull-right navbar-top" id="menu">
+                     {{if .username}}
+                     <li class="nav-item dropdown">
+                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                             我的空间
+                             <b class="caret"></b>
+                         </a>
+                         <ul class="dropdown-menu" role="menu">
+                             <li><a href="/user/{{.username}}"><i class="fa fa-user"></i> 我的主页</a></li>
+                             <li><a href="/setting"><i class="fa fa-cog"></i> 设置</a></li>
+                             {{if .isSuperUser}}
+                                 <li><a href="/admin"><i class="fa fa-wrench"></i> 管理</a></li>
+                             {{end}}
+                             <li class="divider"></li>
+                             <li><a href="/signout"><i class="fa fa-sign-out"></i> 登出</a></li>
+                         </ul>
+                     </li>
+                     {{else}}
+                     <li class="nav-item">
+                        <a class="nav-link" href="/signin">登录</a> 
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="/signup">注册</a>
+                     </li>   
+                    {{end}}
+                    </ul>
+                    <ul class="nav navbar-nav pull-right" >
+                       <form action="/search" class="form-inline navbar-form pull-right navbar-top" method="get" role="search">
+                          <div class="form-group">
+                             <input name="q" type="text" class="form-control" placeholder="搜索">
+                          </div>
+                       </form> 
+                    </ul>
+               
         </div>
     </header>
     {{$ads := ads "top" .db}}

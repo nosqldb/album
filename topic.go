@@ -353,7 +353,7 @@ func topicInNodeHandler(handler *Handler) {
 
 	query.(*mgo.Query).All(&topics)
 
-	handler.renderTemplate("/topic/list.html", TOPICBASE, map[string]interface{}{
+	handler.renderTemplate("/topic/list.html", BASE, map[string]interface{}{
 		"topics": topics,
 		"node":   node,
 		"active": "topic",
