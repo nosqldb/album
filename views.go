@@ -15,7 +15,7 @@ import (
 	"github.com/pborman/uuid"
 	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
-	"github.com/jimmykuu/webhelpers"
+	"github.com/nosqldb/G/helpers"
 	"github.com/jimmykuu/wtforms"
 	qiniuIo "github.com/qiniu/api.v6/io"
 	"github.com/qiniu/api.v6/rs"
@@ -71,8 +71,8 @@ func (u *Utils) News(username string, db *mgo.Database) template.HTML {
 }
 
 func (u *Utils) Truncate(html template.HTML, length int) string {
-	text := webhelpers.RemoveFormatting(string(html))
-	return webhelpers.Truncate(text, length, "...")
+	text := helpers.RemoveFormatting(string(html))
+	return helpers.Truncate(text, length, "...")
 }
 
 func (u *Utils) HTML(str string) template.HTML {

@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"time"
-	"github.com/jimmykuu/webhelpers"
+	"github.com/nosqldb/G/helpers"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -121,7 +121,7 @@ var funcMaps = template.FuncMap{
 		return template.HTML(strings.Replace(text, "\n", "<br>", -1))
 	},
 	"truncate": func(text string, length int, indicator string) string {
-		return webhelpers.Truncate(text, length, indicator)
+		return helpers.Truncate(text, length, indicator)
 	},
 	"include": func(filename string, data map[string]interface{}) template.HTML {
 		// 加载局部模板，从 templates 中去寻找

@@ -12,12 +12,12 @@ import (
 	"strings"
 	"time"
 	. "github.com/nosqldb/G/crypto"
+	"github.com/nosqldb/G/email"
 	"github.com/pborman/uuid"
 	"github.com/bradrydzewski/go.auth"
 	"github.com/dchest/captcha"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
 	qiniuIo "github.com/qiniu/api.v6/io"
 	"github.com/qiniu/api.v6/rs"
@@ -488,12 +488,12 @@ func forgotPasswordHandler(handler *Handler) {
 				code := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"resetcode": code}})
 				message2 = fmt.Sprintf(message2, user.Username, Config.Host, code, Config.Host, code)
-				webhelpers.SendMail(
+				email.SendMail(
 					"[nosqldb.org]重设密码",
 					message2,
 					Config.FromEmail,
 					[]string{user.Email},
-					webhelpers.SmtpConfig{
+					email.SmtpConfig{
 						Username: Config.SmtpUsername,
 						Password: Config.SmtpPassword,
 						Host:     Config.SmtpHost,

@@ -3,7 +3,7 @@ package g
 import (
 	"fmt"
 	"net/http"
-	"github.com/jimmykuu/webhelpers"
+	"github.com/nosqldb/G/helpers"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
 	. "github.com/nosqldb/G/crypto"
@@ -107,7 +107,7 @@ func chooseAvatarHandler(handler *Handler) {
 // 从 Gravatar 获取头像
 func setAvatarFromGravatar(handler *Handler) {
 	user, _ := currentUser(handler)
-	url := webhelpers.Gravatar(user.Email, 256)
+	url := helpers.Gravatar(user.Email, 256)
 	resp, err := http.Get(url)
 	if err != nil {
 		panic(err)
