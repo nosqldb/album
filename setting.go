@@ -160,7 +160,6 @@ func editUserInfoHandler(handler *Handler) {
 			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
 				"email":          profileForm.Value("email"),
 				"website":        profileForm.Value("website"),
-				"location":       profileForm.Value("location"),
 				"tagline":        profileForm.Value("tagline"),
 				"bio":            profileForm.Value("bio"),
 				"githubusername": profileForm.Value("github_username"),
