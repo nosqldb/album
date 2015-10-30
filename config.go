@@ -28,8 +28,6 @@ type ConfigStruct struct {
 	QiniuSecretKey             string `json:"qiniu_secret_key"`
 	QiniuBucket                string `json:"qiniu_bucket"`
 	QiniuDomain                string `json:"qiniu_domain"`
-	GoGetPath                  string `json:"go_get_path"`
-	PackagesDownloadPath       string `json:"packages_download_path"`
 	CookieSecure               bool   `json:"cookie_secure"`
 	GithubClientId             string `json:"github_auth_client_id"`
 	GithubClientSecret         string `json:"github_auth_client_secret"`
