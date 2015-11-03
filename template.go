@@ -16,7 +16,6 @@ import (
 
 const (
 	BASE  = "base.html"
-	TOPICBASE = "topic/base.html"
 	ADMIN = "admin/base.html"
 )
 
