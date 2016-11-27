@@ -125,7 +125,7 @@ func deleteCommentHandler(handler *Handler) {
 	c.Remove(bson.M{"_id": comment.Id_})
 
 	c = handler.DB.C(TOPICS)
-	c.Update(bson.M{"_id": comment.TopicId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
+	c.Update(bson.M{"_id": comment.TopicId}, bson.M{"$inc": bson.M{"commentcount": -1}})
 	
 	var topic Topic
 	c.Find(bson.M{"_id": comment.TopicId}).One(&topic)
@@ -139,7 +139,7 @@ func deleteCommentHandler(handler *Handler) {
 			c = handler.DB.C("comments")
 			c.Find(bson.M{"topicid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
 
-			c = handler.DB.C("contents")
+			c = handler.DB.C(TOPICS)
 			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
 		}
 	}
