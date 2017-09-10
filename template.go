@@ -108,9 +108,6 @@ var funcMaps = template.FuncMap{
 		if(now.Year() == t.Year() && now.Month()-t.Month() < 12) {
 		  return fmt.Sprintf("%d 个月前", now.Month()-t.Month())
 		}	
-		if(now.Year() - t.Year() < 100) {
-		  return fmt.Sprintf("%d 年前", now.Year()-t.Year())
-		}		
 		return t.Format("2006-01-02 15:04")
 	},
 	"formatdatetime": func(t time.Time) string {
