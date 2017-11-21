@@ -3,10 +3,12 @@
 {{define "Breadcrumb"}}
 {{$topic := .utils.AssertTopic .topic}}
 {{$node := $topic.Node .db}}
+<nav aria-label="breadcrumb" role="navigation">
 <ul class="breadcrumb">
-  <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
-  <li><a href="/node/{{$node.Id}}">{{$node.Name}}</a></li>
+  <li class="breadcrumb-item"><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+  <li class="breadcrumb-item"><a href="/node/{{$node.Id}}">{{$node.Name}}</a></li>
 </ul>
+</nav>
 {{end}}
 {{define "Content"}}
 {{$topic := .utils.AssertTopic .topic}}

@@ -1,10 +1,12 @@
 {{define "Title"}}{{.node.Name}}{{end}}
 {{define "ContentWidth"}}8{{end}}
 {{define "Breadcrumb"}}
+<nav aria-label="breadcrumb" role="navigation">
 <ul class="breadcrumb">
-  <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
-  <li class="active">{{.node.Name}}</a></li>
+  <li class="breadcrumb-item"><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+  <li class="breadcrumb-item active" aria-current="page">{{.node.Name}}</a></li>
 </ul>
+</nav>
 {{end}}
 {{define "Content"}}
 <div class="content">

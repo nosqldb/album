@@ -1,12 +1,12 @@
 {{define "Title"}}所有会员{{end}}
 {{define "ContentWidth"}}10{{end}}
 {{define "Breadcrumb"}}
+<nav aria-label="breadcrumb" role="navigation">
 <ul class="breadcrumb">
-  <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
-
-  <li class="active">所有会员</li>
-
+  <li class="breadcrumb-item"><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+  <li class="breadcrumb-item active" aria-current="page">所有会员</li>
 </ul>
+</nav>
 {{end}}
 {{define "Content"}}
 <div class="content">

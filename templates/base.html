@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="http://77fkk5.com1.z0.glb.clouddn.com/static/lib/editor.md-1.5.0/css/editormd.min.css">
     <link rel="stylesheet" href="/static/css/style.css?v=19" type="text/css">
     <link rel="shortcut icon" href="/static/favicon.ico">
-    <script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://static.dbchu.com/lib/jquery/jquery-3.2.1.min.js"></script>
 </head>
 <body>
     <header>
@@ -25,20 +25,27 @@
                         {{html .Code}}
                     {{end}}
                 </div>
-				
+				    <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <a class="navbar-brand" href="/">
                     <img src="http://7fvflv.com1.z0.glb.clouddn.com/logo.png" alt="logo"/>
                 </a>
-				
-				<ul class="nav navbar-nav pull-left navbar-top" id="menu">
-                    <li{{if eq .active "topic"}} class="nav-item active"{{end}} class="nav-item">
-                       <a class="nav-link" href="/">首页</a>
-                    </li>
-				    <li{{if eq .active "download"}} class="nav-item active"{{end}} class="nav-item">
-                       <a class="nav-link" href="/download">下载 </a>
-                    </li>
-				</ul>
-
+				        <div class="collapse navbar-collapse" id="navbarNav">
+				                <ul class="navbar-nav pull-left navbar-top" id="menu">
+                                    <li{{if eq .active "topic"}} class="nav-item active"{{end}} class="nav-item">
+                                       <a class="nav-link" href="/">首页</a>
+                                    </li>
+				                    <li{{if eq .active "download"}} class="nav-item active"{{end}} class="nav-item">
+                                       <a class="nav-link" href="/download">下载 </a>
+                                    </li>
+				                </ul>
+				        </div>
+                <ul class="nav navbar-nav pull-right" >
+                   <form action="/search" class="form-inline navbar-form pull-right navbar-top" method="get" role="search">
+                      <div class="form-group">
+                         <input name="q" type="text" class="form-control" placeholder="搜索">
+                      </div>
+                   </form> 
+                </ul>
                 <ul class="nav navbar-nav pull-right navbar-top" id="menu">
                  {{if .username}}
                  <li class="nav-item dropdown">
@@ -65,14 +72,8 @@
                  </li>   
                 {{end}}
                 </ul>
-                <ul class="nav navbar-nav pull-right" >
-                   <form action="/search" class="form-inline navbar-form pull-right navbar-top" method="get" role="search">
-                      <div class="form-group">
-                         <input name="q" type="text" class="form-control" placeholder="搜索">
-                      </div>
-                   </form> 
-                </ul>
-               
+
+            </nav>   
         </div>
     </header>
     {{$ads := ads "top" .db}}
@@ -116,7 +117,7 @@
     </footer>
     {{.analyticsCode}}
 </body>
-<script type="text/javascript" src="http://static.dbchu.com/lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://static.dbchu.com/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript" src="http://77fkk5.com1.z0.glb.clouddn.com/static/lib/editor.md-1.5.0/editormd.min.js"></script>
 <script type="text/javascript" src="http://7xk58a.com1.z0.glb.clouddn.com/google-code-prettify/prettify.js"></script>
 <script type="text/javascript" src="/static/js/app.js?v=1"></script>

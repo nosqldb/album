@@ -35,15 +35,15 @@ func (p *Pagination) Html(number int) template.HTML {
 		linkFlag = "&"
 	}
 
-	html := `<ul class="pager">`
+	html := `<ul class="pagination  list-pagination">`
 	if number > 1 {
-		html += fmt.Sprintf(`<li class="pager-prev"><a href="%s%sp=%d">&larr; 上一页</a></li>`, p.url, linkFlag, number-1)
+		html += fmt.Sprintf(`<li class="page-item"><a class="page-link list-page-link-prev" href="%s%sp=%d" aria-label="Previous">&laquo; 上一页</a></li>`, p.url, linkFlag, number-1)
 	}
 
-	html += fmt.Sprintf(`<li class="number">%d/%d</li>`, number, pageCount)
+	html += fmt.Sprintf(`<li class="page-item">%d/%d</li>`, number, pageCount)
 
 	if number < pageCount {
-		html += fmt.Sprintf(`<li class="pager-next"><a href="%s%sp=%d">下一页 &rarr;</a></li>`, p.url, linkFlag, number+1)
+		html += fmt.Sprintf(`<li class="page-item"><a class="page-link list-page-link-next" href="%s%sp=%d"  aria-label="Next">下一页 &raquo;</a></li>`, p.url, linkFlag, number+1)
 	}
 
 	return template.HTML(html)
