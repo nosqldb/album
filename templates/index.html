@@ -69,44 +69,46 @@
 
 {{define "RightSide"}}
 <div class="col-md-3  sidebar">
- <div class="card">
-
-	<div class="card-block">
-	  {{if .username}}
-	  {{.utils.UserInfo .username .db}}
-	  <!--
-	  {{.utils.News .username .db}}
-	  <hr>
-	  <a href="/user/{{.username}}/collect?p=1">收藏</a>-->
-	  {{else}}
-	  <h4><small>记录、交流、分享</small></h4>
-	  <hr>
-	  <div align="center">
-		<a href="/signup" class="btn btn-info">注册</a><!-- 或
-															<a href="/auth/login" class="btn btn-info">Github登录</a>-->
+  <div class="card">
+	  <div class="card-block">
+	    {{if .username}}
+	    {{.utils.UserInfo .username .db}}
+	    <!--
+	    {{.utils.News .username .db}}
+	    <hr>
+	    <a href="/user/{{.username}}/collect?p=1">收藏</a>-->
+	    {{else}}
+	    <h4><small>记录、交流、分享</small></h4>
+	    <hr>
+	    <div align="center">
+	  	<a href="/signup" class="btn btn-info">注册</a><!-- 或
+	  														<a href="/auth/login" class="btn btn-info">Github登录</a>-->
+	    </div>
+	    <div class="cleanfix"></div>
+	    <div align="center">已注册用户：<a href="/signin">登录</a></div>
+	    {{end}}
 	  </div>
-	  <div class="cleanfix"></div>
-	  <div align="center">已注册用户：<a href="/signin">登录</a></div>
-	  {{end}}
-	</div>
   </div>
+
+  <br>
+
   <div class="card" >
     <div class="card-block">
 	   <a href="/write" class="btn btn-success btn-lg btn-block" ><i class="fa fa-pencil"></i>提笔写篇文章</a>
     </div>
   </div>
-  
+<br>
   <div class="card">
-
    <div class="card-header">
-  节点导航
-  </div>
-
-   <div class="card-text">
+    节点导航
+   </div>
+   <div class="card-body">
     {{range .nodes}}
-	 <ul class="list-group list-group-flush">
-        <a href="/node/{{.Id}}" class="btn">{{.Name}}</a>
-	 </ul>
+	   <ul class="list-group list-group-flush">
+	   	 <li class="list-group-item">
+	   	 	<a href="/node/{{.Id}}" class="card-link">{{.Name}}</a>
+	   	 </li>
+	   </ul>
     {{end}}
    </div>
   </div>
