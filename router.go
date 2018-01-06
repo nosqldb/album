@@ -103,7 +103,7 @@ var routes = []Route{
 
 	{"/topics/latest", Everyone, latestTopicsHandler},
 	{"/topics/no_reply", Everyone, noReplyTopicsHandler},
-	{"/write", Authenticated, newTopicHandler},
+	{"/p", Authenticated, newTopicHandler},
 	{"/p/{topicId:[0-9a-f]{24}}", Everyone, showTopicHandler},
 	{"/p/{topicId:[0-9a-f]{24}}/edit", Authenticated, editTopicHandler},
 	{"/p/{topicId:[0-9a-f]{24}}/collect", Authenticated, collectTopicHandler},
@@ -124,5 +124,5 @@ var routes = []Route{
 
 	{"/upload/image", Authenticated, uploadImageHandler},
 
-	{"/api/v1/topics", Everyone, apiTopicsHandler},
+	//{"/api/v1/topics", Everyone, apiTopicsHandler},
 }
