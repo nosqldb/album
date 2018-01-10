@@ -556,7 +556,7 @@ type Sizer interface {
 }
 
 // 上传到七牛，并返回文件名
-func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename string, err error) {
+func uploadAvatarToQiniu(file io.ReadCloser, size int64, contentType string) (filename string, err error) {
 	isValidateType := false
 	for _, imgType := range []string{"image/png", "image/jpeg"} {
 		if imgType == contentType {
@@ -585,12 +585,13 @@ func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename strin
 		Scope: Config.QiniuBucket,
 	}
 
-	err = qiniuIo.Put(
+	err = qiniuIo.Put2(
 		nil,
 		ret,
 		policy.Token(nil),
 		key,
 		file,
+		size,
 		nil,
 	)
 

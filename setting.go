@@ -2,6 +2,7 @@ package g
 
 import (
 	"fmt"
+	"strconv"
 	"net/http"
 	"github.com/nosqldb/G/helpers"
 	"github.com/jimmykuu/wtforms"
@@ -64,7 +65,7 @@ func uploadAvatarHandler(handler *Handler) {
 	// 检查是否是jpg或png文件
 	uploadFileType := formHeader.Header["Content-Type"][0]
 
-	filename, err := uploadAvatarToQiniu(formFile, uploadFileType)
+	filename, err := uploadAvatarToQiniu(formFile, fileSize, uploadFileType)
 
 	if err != nil {
 		fmt.Println(err)
@@ -112,9 +113,14 @@ func setAvatarFromGravatar(handler *Handler) {
 	if err != nil {
 		panic(err)
 	}
+	size, err := strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 64)
+	if err != nil {
+		panic(err)
+	}
 	defer resp.Body.Close()
 
-	filename, err := uploadAvatarToQiniu(resp.Body, resp.Header["Content-Type"][0])
+
+	filename, err := uploadAvatarToQiniu(resp.Body, size, resp.Header["Content-Type"][0])
 	if err != nil {
 		panic(err)
 	}

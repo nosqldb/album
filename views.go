@@ -343,12 +343,13 @@ func uploadImageHandler(handler *Handler) {
 		Scope: Config.QiniuBucket,
 	}
 
-	err = qiniuIo.Put(
+	err = qiniuIo.Put2(
 		nil,
 		ret,
 		policy.Token(nil),
 		key,
 		file,
+		header.Size,
 		nil,
 	)
 
