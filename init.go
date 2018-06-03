@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
 	. "github.com/qiniu/api.v6/conf"
 	"gopkg.in/mgo.v2"
@@ -81,10 +80,6 @@ func init() {
 
 	// 生成users.json字符串
 	generateUsersJson(db)
-
-	if Config.DeferPanicApiKey != "" {
-		dps = deferstats.NewClient(Config.DeferPanicApiKey)
-	}
 
 	ACCESS_KEY = Config.QiniuAccessKey
 	SECRET_KEY = Config.QiniuSecretKey

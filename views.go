@@ -13,7 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"github.com/pborman/uuid"
-	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
 	"github.com/nosqldb/G/helpers"
 	"github.com/jimmykuu/wtforms"
@@ -32,7 +31,6 @@ var (
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils
 	usersJson   []byte
-	dps         *deferstats.Client
 )
 
 type Utils struct {
@@ -303,8 +301,6 @@ func searchHandler(handler *Handler) {
 // URL: /upload/image
 // 编辑器上传图片，接收后上传到七牛
 func uploadImageHandler(handler *Handler) {
-	defer dps.Persist()
-
 	file, header, err := handler.Request.FormFile("editormd-image-file")
 	if err != nil {
 		panic(err)

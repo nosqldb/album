@@ -22,8 +22,6 @@ func adminListLinksHandler(handler *Handler) {
 // ULR: /admin/link/new
 // 增加友链
 func adminNewLinkHandler(handler *Handler) {
-	defer dps.Persist()
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 		wtforms.NewTextField("url", "URL", "", wtforms.Required{}, wtforms.URL{}),
@@ -80,8 +78,6 @@ func adminNewLinkHandler(handler *Handler) {
 // URL: /admin/link/{linkId}/edit
 // 编辑友情链接
 func adminEditLinkHandler(handler *Handler) {
-	defer dps.Persist()
-
 	linkId := mux.Vars(handler.Request)["linkId"]
 
 	c := handler.DB.C(LINKS)

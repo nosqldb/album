@@ -2,7 +2,7 @@
 
 ##Requirements
 
-- Go1.5+
+- Go1.9+
 - MongoDB
 - github.com/gorilla/mux
 - github.com/gorilla/sessions
@@ -12,7 +12,6 @@
 - labix.org/v2/mgo
 - github.com/pborman/uuid
 - github.com/jimmykuu/wtforms
-- github.com/deferpanic/deferclient/deferclient
 
 ##Install
 
@@ -37,8 +36,8 @@ Windows:
 
 or:
 
-	$ go build -o binary github.com/nosqldb/G/server
-	$ ./binary
+	$ go build -o G github.com/nosqldb/G/server
+	$ ./G
 
 ##Contributors
 
