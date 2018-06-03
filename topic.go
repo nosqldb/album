@@ -341,7 +341,7 @@ func topicInNodeHandler(handler *Handler) {
 
 	c = handler.DB.C(TOPICS)
 
-	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_}).Sort("-latestrepliedat"), "/", 20)
+	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_}).Sort("-latestrepliedat"), "/node/" + nodeId, PerPage)
 
 	var topics []Topic
 
@@ -356,6 +356,8 @@ func topicInNodeHandler(handler *Handler) {
 	handler.renderTemplate("/topic/list.html", BASE, map[string]interface{}{
 		"topics": topics,
 		"node":   node,
+		"pagination": pagination,
+		"page": page,
 		"active": "topic",
 	})
 }
