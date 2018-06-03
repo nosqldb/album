@@ -120,8 +120,6 @@ var routes = []Route{
 	{"/users", Everyone, usersHandler},
 	{"/users/all", Everyone, allUsersHandler},
 
-	{"/download", Everyone, downloadHandler},
-
 	{"/upload/image", Authenticated, uploadImageHandler},
 
 	//{"/api/v1/topics", Everyone, apiTopicsHandler},
