@@ -13,7 +13,6 @@ import (
 func init() {
 	parseJsonFile("etc/config.json", &Config)
 	analyticsCode = getDefaultCode(Config.AnalyticsFile)
-	configGithubAuth()
 
 	if Config.DB == "" {
 		fmt.Println("数据库地址还没有配置,请到config.json内配置db字段.")

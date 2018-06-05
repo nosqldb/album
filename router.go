@@ -76,8 +76,6 @@ var routes = []Route{
 	{"/admin/topic/{id:[0-9a-f]{24}}/cancel/top", Administrator, cancelTopTopicHandler},
 	{"/admin/topic/{id:[0-9a-f]{24}}/set/top", Administrator, setTopTopicHandler},
 
-	{"/auth/signup", Everyone, authSignupHandler},
-	{"/auth/login", Everyone, authLoginHandler},
 	{"/signup", Everyone, signupHandler},
 	{"/signin", Everyone, signinHandler},
 	{"/signout", Authenticated, signoutHandler},

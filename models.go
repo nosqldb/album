@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"html/template"
 	"time"
-	"github.com/gorilla/sessions"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	. "github.com/nosqldb/G/crypto"
@@ -27,7 +26,6 @@ const (
 	USERS               = "users"
 	CODE                = "code"
 
-	GITHUB_COM = "github.com"
 )
 
 var colors = []string{"#FFCC66", "#66CCFF", "#6666FF", "#FF8000", "#0080FF", "#008040", "#008080"}
@@ -72,9 +70,7 @@ type User struct {
 	Website         string
 	Tagline         string
 	Bio             string
-	Twitter         string
 	Weibo           string    // 微博
-	GitHubUsername  string    // GitHub 用户名
 	JoinedAt        time.Time // 加入时间
 	Follow          []string
 	Fans            []string
@@ -86,12 +82,6 @@ type User struct {
 	ValidateCode    string
 	ResetCode       string
 	Index           int    // 第几个加入社区
-	AccountRef      string //帐号关联的社区
-	IdRef           string //关联社区的帐号
-	LinkRef         string //关联社区的主页链接
-	OrgRef          string //关联社区的组织或者公司
-	PictureRef      string //关联社区的头像链接
-	Provider        string //关联社区名称,比如 github.com
 }
 
 // 增加最近被@
@@ -127,34 +117,10 @@ func (u *User) IsDefaultAvatar(avatar string) bool {
 	return filename == avatar
 }
 
-// 插入github注册的用户
-func (u *User) GetGithubValues(session *sessions.Session) {
-	u.Website = session.Values[GITHUB_LINK].(string)
-	u.GitHubUsername = session.Values[GITHUB_ID].(string)
-	u.AccountRef = session.Values[GITHUB_NAME].(string)
-	u.IdRef = session.Values[GITHUB_ID].(string)
-	u.LinkRef = session.Values[GITHUB_LINK].(string)
-	u.OrgRef = session.Values[GITHUB_ORG].(string)
-	u.PictureRef = session.Values[GITHUB_PICTURE].(string)
-	u.Provider = session.Values[GITHUB_PROVIDER].(string)
-
-}
 
 // 检查密码是否正确
 func (u User) CheckPassword(password string) bool {
 	return ComparePwd(password, u.Password)
-}
-
-// 删除通过session传的默认信息
-func deleteGithubValues(session *sessions.Session) {
-	// 删除session传过来的默认信息
-	delete(session.Values, GITHUB_EMAIL)
-	delete(session.Values, GITHUB_ID)
-	delete(session.Values, GITHUB_LINK)
-	delete(session.Values, GITHUB_NAME)
-	delete(session.Values, GITHUB_ORG)
-	delete(session.Values, GITHUB_PICTURE)
-	delete(session.Values, GITHUB_PROVIDER)
 }
 
 // 头像的图片地址

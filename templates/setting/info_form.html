@@ -39,13 +39,6 @@
       </div>
     </fieldset>
     <hr>
-    {{$github_username := .profileForm.Field "github_username"}}
-    <fieldset class="form-group">
-      {{$github_username.RenderLabel `class="col-lg-2 control-label"`}}
-      <div class="col-lg-10">
-        {{$github_username.RenderInput `class="form-control"`}}
-      </div>
-    </fieldset>
     {{$weibo := .profileForm.Field "weibo"}}
     <fieldset class="form-group">
       {{$weibo.RenderLabel `class="col-lg-2 control-label"`}}

@@ -14,7 +14,6 @@ import (
 	. "github.com/nosqldb/G/crypto"
 	"github.com/nosqldb/G/email"
 	"github.com/pborman/uuid"
-	"github.com/bradrydzewski/go.auth"
 	"github.com/dchest/captcha"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -36,18 +35,6 @@ var defaultAvatars = []string{
 	"gopher_teal.jpg",
 }
 
-const (
-	GITHUB_PICTURE  = "github_picture"
-	GITHUB_ID       = "github_id"
-	GITHUB_LINK     = "github_link"
-	GITHUB_EMAIL    = "github_email"
-	GITHUB_NAME     = "github_name"
-	GITHUB_ORG      = "github_org"
-	GITHUB_PROVIDER = "github_provider"
-)
-
-//init 在config.go下,因为这个文件的init调用比config慢
-var githubHandler *auth.AuthHandler
 
 // 生成users.json字符串
 func generateUsersJson(db *mgo.Database) {
@@ -97,77 +84,6 @@ func currentUser(handler *Handler) (*User, bool) {
 	return &user, true
 }
 
-// URL: /auth/login
-func authLoginHandler(handler *Handler) {
-	githubHandler.ServeHTTP(handler.ResponseWriter, handler.Request)
-}
-
-// wrapAuthHandler返回符合 go.auth包要求签名的函数.
-func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Request, u auth.User) {
-	return func(w http.ResponseWriter, r *http.Request, u auth.User) {
-		c := handler.DB.C(USERS)
-		user := User{}
-		session, _ := store.Get(r, "user")
-		c.Find(bson.M{"username": u.Id()}).One(&user)
-		//关联github帐号,直接登录
-		if user.Provider == GITHUB_COM {
-			session.Values["username"] = user.Username
-			session.Save(r, w)
-			http.Redirect(w, r, "/", http.StatusSeeOther)
-		}
-		form := wtforms.NewForm(wtforms.NewTextField("username", "用户名", "", wtforms.Required{}),
-			wtforms.NewPasswordField("password", "密码", wtforms.Required{}))
-		session.Values[GITHUB_EMAIL] = u.Email()
-		session.Values[GITHUB_ID] = u.Id()
-		session.Values[GITHUB_LINK] = u.Link()
-		session.Values[GITHUB_NAME] = u.Name()
-		session.Values[GITHUB_ORG] = u.Org()
-		session.Values[GITHUB_PICTURE] = u.Picture()
-		session.Values[GITHUB_PROVIDER] = u.Provider()
-		session.Save(r, w)
-
-		//关联已有帐号
-		if handler.Request.Method == "POST" {
-			if form.Validate(handler.Request) {
-				user := User{}
-				err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
-				if err != nil {
-					form.AddError("username", "该用户不存在")
-					handler.renderTemplate("accoun/auth_login.html", BASE, map[string]interface{}{"form": form})
-					return
-				}
-
-				if !ComparePwd(form.Value("password"), user.Password) {
-					form.AddError("password", "密码和用户名不匹配")
-
-					handler.renderTemplate("account/auth_login.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
-					return
-				}
-				c.UpdateId(user.Id_, bson.M{"$set": bson.M{
-					"emal":       session.Values[GITHUB_EMAIL],
-					"accountref": session.Values[GITHUB_NAME],
-					"username":   session.Values[GITHUB_ID],
-					"idref":      session.Values[GITHUB_ID],
-					"linkref":    session.Values[GITHUB_LINK],
-					"orgref":     session.Values[GITHUB_ORG],
-					"pictureref": session.Values[GITHUB_PICTURE],
-					"provider":   session.Values[GITHUB_PROVIDER],
-				}})
-				deleteGithubValues(session)
-				session.Values["username"] = u.Name()
-				session.Save(r, w)
-				http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
-			}
-		}
-		handler.renderTemplate("account/auth_login.html", BASE, map[string]interface{}{"form": form})
-	}
-}
-
-// URL: /auth/signup
-func authSignupHandler(handler *Handler) {
-	fn := auth.SecureUser(wrapAuthHandler(handler))
-	fn.ServeHTTP(handler.ResponseWriter, handler.Request)
-}
 
 // URL: /signup
 // 处理用户注册,要求输入用户名,密码和邮箱
@@ -180,14 +96,7 @@ func signupHandler(handler *Handler) {
 
 	var username string
 	var email string
-	session, _ := store.Get(handler.Request, "user")
-	if handler.Request.Method == "GET" {
-		//如果是从新建关联过来的就自动填充字段
-		if session.Values[GITHUB_PROVIDER] == GITHUB_COM {
-			username = session.Values[GITHUB_ID].(string)
-			email = session.Values[GITHUB_EMAIL].(string)
-		}
-	}
+
 	form := wtforms.NewForm(
 		wtforms.NewTextField("username", "用户名", username, wtforms.Required{}, wtforms.Regexp{Expr: `^[a-zA-Z0-9_]{3,16}$`, Message: "请使用a-z, A-Z, 0-9以及下划线, 长度3-16之间"}),
 		wtforms.NewPasswordField("password", "密码", wtforms.Required{}),
@@ -252,10 +161,7 @@ func signupHandler(handler *Handler) {
 				JoinedAt:     time.Now(),
 				Index:        index,
 			}
-			if session.Values[GITHUB_PROVIDER] == GITHUB_COM {
-				u.GetGithubValues(session)
-				defer deleteGithubValues(session)
-			}
+
 			err = c.Insert(u)
 			if err != nil {
 				logger.Println(err)

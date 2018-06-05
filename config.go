@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"runtime"
-	"github.com/bradrydzewski/go.auth"
 )
 
 type ConfigStruct struct {
@@ -29,11 +28,6 @@ type ConfigStruct struct {
 	QiniuBucket                string `json:"qiniu_bucket"`
 	QiniuDomain                string `json:"qiniu_domain"`
 	CookieSecure               bool   `json:"cookie_secure"`
-	GithubClientId             string `json:"github_auth_client_id"`
-	GithubClientSecret         string `json:"github_auth_client_secret"`
-	GithubLoginRedirect        string `json:"github_login_redirect"`
-	GithubLoginSuccessRedirect string `json:"github_login_success_redirect"`
-	DeferPanicApiKey           string `json:"deferpanic_api_key"`
 }
 
 var (
@@ -67,16 +61,3 @@ func getDefaultCode(path string) (code template.HTML) {
 	return
 }
 
-func configGithubAuth() {
-	if Config.GithubClientId == "" || Config.GithubClientSecret == "" {
-		logger.Fatal("没有配置github应用的参数")
-	}
-	auth.Config.CookieSecret = []byte(Config.CookieSecret)
-	auth.Config.LoginRedirect = Config.GithubLoginRedirect
-	auth.Config.LoginSuccessRedirect = Config.GithubLoginSuccessRedirect
-	auth.Config.CookieSecure = Config.CookieSecure
-	if !auth.Config.CookieSecure {
-		logger.Println("注意,cookie_secure设置为false,只能在本地环境下测试")
-	}
-	githubHandler = auth.Github(Config.GithubClientId, Config.GithubClientSecret, "user")
-}

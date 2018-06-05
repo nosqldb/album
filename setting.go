@@ -141,7 +141,6 @@ func editUserInfoHandler(handler *Handler) {
 		wtforms.NewTextField("website", "个人网站", user.Website),
 		wtforms.NewTextField("tagline", "签名", user.Tagline),
 		wtforms.NewTextArea("bio", "个人简介", user.Bio),
-		wtforms.NewTextField("github_username", "GitHub用户名", user.GitHubUsername),
 		wtforms.NewTextField("weibo", "新浪微博", user.Weibo),
 	)
 
@@ -168,7 +167,6 @@ func editUserInfoHandler(handler *Handler) {
 				"website":        profileForm.Value("website"),
 				"tagline":        profileForm.Value("tagline"),
 				"bio":            profileForm.Value("bio"),
-				"githubusername": profileForm.Value("github_username"),
 				"weibo":          profileForm.Value("weibo"),
 			}})
 			handler.redirect("/setting/edit_info", http.StatusFound)
