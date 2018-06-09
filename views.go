@@ -12,9 +12,11 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"io"
+	"errors"
 	"github.com/pborman/uuid"
 	"github.com/gorilla/sessions"
-	"github.com/nosqldb/G/helpers"
+	"github.com/nosqldb/album/helpers"
 	"github.com/jimmykuu/wtforms"
 	qiniuIo "github.com/qiniu/api.v6/io"
 	"github.com/qiniu/api.v6/rs"
@@ -37,7 +39,7 @@ type Utils struct {
 }
 
 func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
-	c := db.C(USERS)
+	c := db.C(USER)
 
 	user := User{}
 	// 检查用户名
@@ -54,13 +56,13 @@ func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
 }
 
 func (u *Utils) News(username string, db *mgo.Database) template.HTML {
-	c := db.C(USERS)
+	c := db.C(USER)
 	user := User{}
 	//检查用户名
 	c.Find(bson.M{"username": username}).One(&user)
 	format := `<div>
 		<hr>
-		<a href="/user/%s/news#topic">新回复 <span class="label label-pill label-default pull-right">%d</span></a>
+		<a href="/user/%s/news#album">新回复 <span class="label label-pill label-default pull-right">%d</span></a>
 		<br>
 		<a href="/user/%s/news#at">AT<span class="label label-pill label-default pull-right">%d</span></a>
 	</div>
@@ -148,8 +150,8 @@ func (u *Utils) AssertNode(i interface{}) *Node {
 	return &v
 }
 
-func (u *Utils) AssertTopic(i interface{}) *Topic {
-	v, _ := i.(Topic)
+func (u *Utils) AssertAlbum(i interface{}) *Album {
+	v, _ := i.(Album)
 	return &v
 }
 
@@ -258,7 +260,7 @@ func searchHandler(handler *Handler) {
 		markdownConditions = append(markdownConditions, bson.M{"markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
-	c := handler.DB.C(TOPICS)
+	c := handler.DB.C(ALBUM)
 
 	var pagination *Pagination
 
@@ -275,7 +277,7 @@ func searchHandler(handler *Handler) {
 		}}).Sort("-latestrepliedat"), "/search?q="+q, PerPage)
 	}
 
-	var topics []Topic
+	var albums []Album
 
 	query, err := pagination.Page(page)
 	if err != nil {
@@ -283,7 +285,7 @@ func searchHandler(handler *Handler) {
 		return
 	}
 
-	query.(*mgo.Query).All(&topics)
+	query.(*mgo.Query).All(&albums)
 
 	if err != nil {
 		println(err.Error())
@@ -291,10 +293,10 @@ func searchHandler(handler *Handler) {
 
 	handler.renderTemplate("search.html", BASE, map[string]interface{}{
 		"q":          q,
-		"topics":     topics,
+		"albums":     albums,
 		"pagination": pagination,
 		"page":       page,
-		"active":     "topic",
+		"active":     "album",
 	})
 }
 
@@ -364,4 +366,51 @@ func uploadImageHandler(handler *Handler) {
 		"success": 1,
 		"url":     Config.QiniuDomain + key,
 	})
+}
+
+// 上传到七牛，并返回文件名
+func uploadImageToQiniu(file io.ReadCloser, size int64, contentType string) (filename string, err error) {
+	isValidateType := false
+	for _, imgType := range []string{"image/png", "image/jpeg"} {
+		if imgType == contentType {
+			isValidateType = true
+			break
+		}
+	}
+
+	if !isValidateType {
+		return "", errors.New("文件类型错误")
+	}
+
+	filenameExtension := ".jpg"
+	if contentType == "image/png" {
+		filenameExtension = ".png"
+	}
+
+	// 文件名：32位uuid，不带减号和后缀组成
+	filename = strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
+
+	key := filename
+
+	ret := new(qiniuIo.PutRet)
+
+	var policy = rs.PutPolicy{
+		Scope: Config.QiniuBucket,
+	}
+
+	err = qiniuIo.Put2(
+		nil,
+		ret,
+		policy.Token(nil),
+		key,
+		file,
+		size,
+		nil,
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	return Config.QiniuDomain + filename, nil
 }

@@ -18,7 +18,7 @@ import (
 //  用于测试
 var testParam func() = func() {}
 
-func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url string, subActive string) {
+func albumsHandler(handler *Handler, conditions bson.M, sortBy string, url string, subActive string) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -26,33 +26,33 @@ func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url strin
 		return
 	}
 
-	var nodes []Node
-	c := handler.DB.C(NODES)
-	c.Find(bson.M{"topiccount": bson.M{"$gt": 0}}).Sort("-topiccount").All(&nodes)
+	var node []Node
+	c := handler.DB.C(NODE)
+	c.Find(bson.M{"albumcount": bson.M{"$gt": 0}}).Sort("-albumcount").All(&node)
 
 	var status Status
 	c = handler.DB.C(STATUS)
 	c.Find(nil).One(&status)
 
-	c = handler.DB.C(TOPICS)
+	c = handler.DB.C(ALBUM)
 
-	var topTopics []Topic
+	var topAlbums []Album
 
 	if page == 1 {
-		c.Find(bson.M{"is_top": true}).Sort(sortBy).All(&topTopics)
+		c.Find(bson.M{"is_top": true}).Sort(sortBy).All(&topAlbums)
 
 		var objectIds []bson.ObjectId
-		for _, topic := range topTopics {
-			objectIds = append(objectIds, topic.Id_)
+		for _, album := range topAlbums {
+			objectIds = append(objectIds, album.Id_)
 		}
-		if len(topTopics) > 0 {
+		if len(topAlbums) > 0 {
 			conditions["_id"] = bson.M{"$not": bson.M{"$in": objectIds}}
 		}
 	}
 
 	pagination := NewPagination(c.Find(conditions).Sort(sortBy), url, PerPage)
 
-	var topics []Topic
+	var albums []Album
 
 	query, err := pagination.Page(page)
 	if err != nil {
@@ -60,22 +60,17 @@ func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url strin
 		return
 	}
 
-	query.(*mgo.Query).All(&topics)
+	query.(*mgo.Query).All(&albums)
 
-	var links []Link
-	c = handler.DB.C(LINKS)
-	c.Find(bson.M{"is_on_home": true}).All(&links)
-
-	topics = append(topTopics, topics...)
+	albums = append(topAlbums, albums...)
 
 	handler.renderTemplate("index.html", BASE, map[string]interface{}{
-		"nodes":         nodes,
+		"nodes":         node,
 		"status":        status,
-		"topics":        topics,
-		"links":         links,
+		"albums":     albums,
 		"pagination":    pagination,
 		"page":          page,
-		"active":        "topic",
+		"active":        "album",
 		"subActive":     subActive,
 	})
 }
@@ -83,28 +78,30 @@ func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url strin
 // URL: /
 // 网站首页,列出按回帖时间倒序排列的第一页
 func indexHandler(handler *Handler) {
-	topicsHandler(handler, bson.M{}, "-latestrepliedat", "/", "latestReply")
+	albumsHandler(handler, bson.M{}, "-latestrepliedat", "/", "latestReply")
 }
 
-// URL: /topics/latest
+// URL: /albums/latest
 // 最新发布的主题，按照发布时间倒序排列
-func latestTopicsHandler(handler *Handler) {
-	topicsHandler(handler, bson.M{}, "-createdat", "/topics/latest", "latestCreate")
+func latestAlbumsHandler(handler *Handler) {
+	albumsHandler(handler, bson.M{}, "-createdat", "/albums/latest", "latestCreate")
 }
 
-// URL: /topics/no_reply
+// URL: /albums/no_reply
 // 无人回复的主题，按照发布时间倒序排列
-func noReplyTopicsHandler(handler *Handler) {
-	topicsHandler(handler, bson.M{"commentcount": 0}, "-createdat", "/topics/no_reply", "noReply")
+func noReplyAlbumsHandler(handler *Handler) {
+	albumsHandler(handler, bson.M{"commentcount": 0}, "-createdat", "/albums/no_reply", "noReply")
 }
 
 // URL: /p
 // 发布主题
-func newTopicHandler(handler *Handler) {
+func newAlbumHandler(handler *Handler) {
+
+
 	nodeId := mux.Vars(handler.Request)["node"]
 
 	var nodes []Node
-	c := handler.DB.C(NODES)
+	c := handler.DB.C(NODE)
 	c.Find(nil).All(&nodes)
 
 	var choices = []wtforms.Choice{wtforms.Choice{Value:"", Label:"选择节点"}} // 第一个选项为选择节点
@@ -120,21 +117,32 @@ func newTopicHandler(handler *Handler) {
 		wtforms.NewTextArea("editormd-html-code", "HTML", ""),
 	)
 
-	if handler.Request.Method == "POST" {
+	if handler.Request.Method == "POST" {	
 		if form.Validate(handler.Request) {
+			formFile, formHeader, err := handler.Request.FormFile("file")
+	        if err != nil {
+	        	fmt.Println("newAlbumHandler:", err.Error())
+	        }
+	        fileSize := formFile.(Sizer).Size()
+	        // 检查是否是jpg或png文件
+	        uploadFileType := formHeader.Header["Content-Type"][0]
+	        url, err := uploadImageToQiniu(formFile, fileSize, uploadFileType)
+	        fmt.Println(url)
+			
 			user, _ := currentUser(handler)
 
-			c = handler.DB.C(TOPICS)
+			c = handler.DB.C(ALBUM)
 
 			id_ := bson.NewObjectId()
 
 			now := time.Now()
 
 			nodeId := bson.ObjectIdHex(form.Value("node"))
-			err := c.Insert(&Topic{
+			err = c.Insert(&Album{
 				    Id_:             id_,
 				    NodeId:          nodeId,
 					Title:     form.Value("title"),
+					Photo: url,
 					Markdown:  form.Value("editormd-markdown-doc"),
 					Html:      template.HTML(form.Value("editormd-html-code")),
 					CreatedBy: user.Id_,
@@ -143,54 +151,54 @@ func newTopicHandler(handler *Handler) {
 			})
 
 			if err != nil {
-				fmt.Println("newTopicHandler:", err.Error())
+				fmt.Println("newAlbumHandler:", err.Error())
 				return
 			}
 
-			// 增加Node.TopicCount
-			c = handler.DB.C(NODES)
-			c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
+			// 增加Node.AlbumCount
+			c = handler.DB.C(NODE)
+			c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"albumcount": 1}})
 
 			c = handler.DB.C(STATUS)
 
-			c.Update(nil, bson.M{"$inc": bson.M{"topiccount": 1}})
+			c.Update(nil, bson.M{"$inc": bson.M{"albumcount": 1}})
 
 			http.Redirect(handler.ResponseWriter, handler.Request, "/p/"+id_.Hex(), http.StatusFound)
 			return
 		}
 	}
 
-	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("album/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "发布",
-		"action": "/write",
-		"active": "topic",
+		"action": "/p",
+		"active": "album",
 	})
 }
 
-// URL: /p/{topicId}/edit
+// URL: /p/{albumId}/edit
 // 编辑主题
-func editTopicHandler(handler *Handler) {
+func editAlbumHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
-	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["topicId"])
+	albumId := bson.ObjectIdHex(mux.Vars(handler.Request)["albumId"])
 
-	c := handler.DB.C(TOPICS)
-	var topic Topic
-	err := c.Find(bson.M{"_id": topicId}).One(&topic)
+	c := handler.DB.C(ALBUM)
+	var album Album
+	err := c.Find(bson.M{"_id": albumId}).One(&album)
 
 	if err != nil {
 		message(handler, "没有该主题", "没有该主题,不能编辑", "error")
 		return
 	}
 
-	if !topic.CanEdit(user.Username, handler.DB) {
+	if !album.CanEdit(user.Username, handler.DB) {
 		message(handler, "没有该权限", "对不起,你没有权限编辑该主题", "error")
 		return
 	}
 
 	var nodes []Node
-	c = handler.DB.C(NODES)
+	c = handler.DB.C(NODE)
 	c.Find(nil).All(&nodes)
 
 	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
@@ -200,17 +208,17 @@ func editTopicHandler(handler *Handler) {
 	}
 
 	form := wtforms.NewForm(
-		wtforms.NewSelectField("node", "节点", choices, topic.NodeId.Hex(), &wtforms.Required{}),
-		wtforms.NewTextArea("title", "标题", topic.Title, &wtforms.Required{}),
-		wtforms.NewTextArea("editormd-markdown-doc", "内容", topic.Markdown),
+		wtforms.NewSelectField("node", "节点", choices, album.NodeId.Hex(), &wtforms.Required{}),
+		wtforms.NewTextArea("title", "标题", album.Title, &wtforms.Required{}),
+		wtforms.NewTextArea("editormd-markdown-doc", "内容", album.Markdown),
 		wtforms.NewTextArea("editormd-html-code", "html", ""),
 	)
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
 			nodeId := bson.ObjectIdHex(form.Value("node"))
-			c = handler.DB.C(TOPICS)
-			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
+			c = handler.DB.C(ALBUM)
+			c.Update(bson.M{"_id": album.Id_}, bson.M{"$set": bson.M{
 				"nodeid":            nodeId,
 				"title":     form.Value("title"),
 				"markdown":  form.Value("editormd-markdown-doc"),
@@ -220,41 +228,41 @@ func editTopicHandler(handler *Handler) {
 			}})
 
 			// 如果两次的节点不同,更新节点的主题数量
-			if topic.NodeId != nodeId {
-				c = handler.DB.C(NODES)
-				c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
-				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
+			if album.NodeId != nodeId {
+				c = handler.DB.C(NODE)
+				c.Update(bson.M{"_id": album.NodeId}, bson.M{"$inc": bson.M{"albumcount": -1}})
+				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"albumcount": 1}})
 			}
 
-			http.Redirect(handler.ResponseWriter, handler.Request, "/p/"+topic.Id_.Hex(), http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/p/"+album.Id_.Hex(), http.StatusFound)
 			return
 		}
 	}
 
-	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("album/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑",
-		"action": "/p/" + topicId + "/edit",
-		"active": "topic",
+		"action": "/p/" + albumId + "/edit",
+		"active": "album",
 	})
 }
 
-// URL: /p/{topicId}
+// URL: /p/{albumId}
 // 根据主题的ID,显示主题的信息及回复
-func showTopicHandler(handler *Handler) {
+func showAlbumHandler(handler *Handler) {
 	testParam()
 	vars := mux.Vars(handler.Request)
-	topicId := vars["topicId"]
-	c := handler.DB.C(TOPICS)
-	cusers := handler.DB.C(USERS)
-	topic := Topic{}
+	albumId := vars["albumId"]
+	c := handler.DB.C(ALBUM)
+	cusers := handler.DB.C(USER)
+	album := Album{}
 
-	if !bson.IsObjectIdHex(topicId) {
+	if !bson.IsObjectIdHex(albumId) {
 		http.NotFound(handler.ResponseWriter, handler.Request)
 		return
 	}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId)}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(albumId)}).One(&album)
 
 	if err != nil {
 		logger.Println(err)
@@ -262,7 +270,7 @@ func showTopicHandler(handler *Handler) {
 		return
 	}
 
-	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"hits": 1}})
+	c.UpdateId(bson.ObjectIdHex(albumId), bson.M{"$inc": bson.M{"hits": 1}})
 
 	user, has := currentUser(handler)
 
@@ -273,7 +281,7 @@ func showTopicHandler(handler *Handler) {
 		pos := -1
 
 		for k, v := range replies {
-			if v.TopicId == topicId {
+			if v.AlbumId == albumId {
 				pos = k
 				break
 			}
@@ -294,7 +302,7 @@ func showTopicHandler(handler *Handler) {
 		pos = -1
 
 		for k, v := range ats {
-			if v.TopicId == topicId {
+			if v.AlbumId == albumId {
 				pos = k
 				break
 			}
@@ -311,18 +319,18 @@ func showTopicHandler(handler *Handler) {
 		}
 	}
 
-	handler.renderTemplate("topic/show.html", BASE, map[string]interface{}{
-		"topic":  topic,
-		"active": "topic",
+	handler.renderTemplate("album/show.html", BASE, map[string]interface{}{
+		"album":  album,
+		"active": "album",
 	})
 }
 
 // URL: /node/{node}
 // 列出节点下所有的主题
-func topicInNodeHandler(handler *Handler) {
+func albumInNodeHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	nodeId := vars["node"]
-	c := handler.DB.C(NODES)
+	c := handler.DB.C(NODE)
 
 	node := Node{}
 	err := c.Find(bson.M{"id": nodeId}).One(&node)
@@ -339,11 +347,11 @@ func topicInNodeHandler(handler *Handler) {
 		return
 	}
 
-	c = handler.DB.C(TOPICS)
+	c = handler.DB.C(ALBUM)
 
 	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_}).Sort("-latestrepliedat"), "/node/" + nodeId, PerPage)
 
-	var topics []Topic
+	var albums []Album
 
 	query, err := pagination.Page(page)
 	if err != nil {
@@ -351,98 +359,98 @@ func topicInNodeHandler(handler *Handler) {
 		return
 	}
 
-	query.(*mgo.Query).All(&topics)
+	query.(*mgo.Query).All(&albums)
 
-	handler.renderTemplate("/topic/list.html", BASE, map[string]interface{}{
-		"topics": topics,
+	handler.renderTemplate("/album/list.html", BASE, map[string]interface{}{
+		"albums": albums,
 		"node":   node,
 		"pagination": pagination,
 		"page": page,
-		"active": "topic",
+		"active": "album",
 	})
 }
 
-// URL: /p/{topicId}/collect/
+// URL: /p/{albumId}/collect/
 // 将主题收藏至当前用户的收藏夹
-func collectTopicHandler(handler *Handler) {
+func collectAlbumHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
-	topicId := vars["topicId"]
+	albumId := vars["albumId"]
 	t := time.Now()
 	user, _ := currentUser(handler)
-	for _, v := range user.TopicsCollected {
-		if v.TopicId == topicId {
+	for _, v := range user.AlbumsCollected {
+		if v.AlbumId == albumId {
 			return
 		}
 	}
-	user.TopicsCollected = append(user.TopicsCollected, CollectTopic{topicId, t})
-	c := handler.DB.C(USERS)
-	c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
+	user.AlbumsCollected = append(user.AlbumsCollected, CollectAlbum{albumId, t})
+	c := handler.DB.C(USER)
+	c.UpdateId(user.Id_, bson.M{"$set": bson.M{"albumscollected": user.AlbumsCollected}})
 	http.Redirect(handler.ResponseWriter, handler.Request, "/user/"+user.Username+"/collect?p=1", http.StatusFound)
 }
 
-// URL: /p/{topicId}/delete
+// URL: /p/{albumId}/delete
 // 删除主题
-func deleteTopicHandler(handler *Handler) {
+func deleteAlbumHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
-	topicId := bson.ObjectIdHex(vars["topicId"])
+	albumId := bson.ObjectIdHex(vars["albumId"])
 
-	c := handler.DB.C(TOPICS)
+	c := handler.DB.C(ALBUM)
 
-	topic := Topic{}
+	album := Album{}
 
-	err := c.Find(bson.M{"_id": topicId}).One(&topic)
+	err := c.Find(bson.M{"_id": albumId}).One(&album)
 	
 	if err != nil {
-		fmt.Println("deleteTopic:", err.Error())
+		fmt.Println("deleteAlbum:", err.Error())
 		return
 	}
 
 	// Node统计数减一
-	c = handler.DB.C(NODES)
-	c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
+	c = handler.DB.C(NODE)
+	c.Update(bson.M{"_id": album.NodeId}, bson.M{"$inc": bson.M{"albumcount": -1}})
 
 	c = handler.DB.C(STATUS)
 	// 统计的主题数减一，减去统计的回复数减去该主题的回复数
-	c.Update(nil, bson.M{"$inc": bson.M{"topiccount": -1, "replycount": -topic.CommentCount}})
+	c.Update(nil, bson.M{"$inc": bson.M{"albumcount": -1, "replycount": -album.CommentCount}})
 
 	//删除评论
-	c = handler.DB.C(COMMENTS)
-	if topic.CommentCount > 0 {
-		c.Remove(bson.M{"topicid": topic.Id_})
+	c = handler.DB.C(COMMENT)
+	if album.CommentCount > 0 {
+		c.Remove(bson.M{"albumid": album.Id_})
 	}
 
-	// 删除Topic记录
-	c = handler.DB.C(TOPICS)
-	c.Remove(bson.M{"_id": topic.Id_})
+	// 删除Album记录
+	c = handler.DB.C(ALBUM)
+	c.Remove(bson.M{"_id": album.Id_})
 	
 	http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
 }
 
 // 列出置顶的主题
-func listTopTopicsHandler(handler *Handler) {
-	var topics []Topic
-	c := handler.DB.C(TOPICS)
-	c.Find(bson.M{"is_top": true}).All(&topics)
+func listTopAlbumsHandler(handler *Handler) {
+	var albums []Album
+	c := handler.DB.C(ALBUM)
+	c.Find(bson.M{"is_top": true}).All(&albums)
 
-	handler.renderTemplate("/topic/top_list.html", ADMIN, map[string]interface{}{
-		"topics": topics,
+	handler.renderTemplate("/album/top_list.html", ADMIN, map[string]interface{}{
+		"albums": albums,
 	})
 }
 
 // 设置置顶
-func setTopTopicHandler(handler *Handler) {
-	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["id"])
-	c := handler.DB.C(TOPICS)
-	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": true}})
-	handler.Redirect("/p/" + topicId.Hex())
+func setTopAlbumHandler(handler *Handler) {
+	albumId := bson.ObjectIdHex(mux.Vars(handler.Request)["id"])
+	c := handler.DB.C(ALBUM)
+	c.Update(bson.M{"_id": albumId}, bson.M{"$set": bson.M{"is_top": true}})
+	handler.Redirect("/p/" + albumId.Hex())
 }
 
 // 取消置顶
-func cancelTopTopicHandler(handler *Handler) {
+func cancelTopAlbumHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
-	topicId := bson.ObjectIdHex(vars["id"])
+	albumId := bson.ObjectIdHex(vars["id"])
 
-	c := handler.DB.C(TOPICS)
-	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": false}})
-	handler.Redirect("/admin/top/topics")
+	c := handler.DB.C(ALBUM)
+	c.Update(bson.M{"_id": albumId}, bson.M{"$set": bson.M{"is_top": false}})
+	handler.Redirect("/admin/top/albums")
 }

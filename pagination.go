@@ -69,8 +69,8 @@ func (p *Pagination) Page(number int) (interface{}, error) {
 			query = query.Skip(p.perPage * (number - 1))
 		}
 		return query.Limit(p.perPage), nil
-	case []CollectTopic:
-		cts := p.query.([]CollectTopic)
+	case []CollectAlbum:
+		cts := p.query.([]CollectAlbum)
 		if count := len(cts); count == 0 {
 			return cts, nil
 		}
@@ -100,8 +100,8 @@ func NewPagination(query interface{}, url string, perPage int) *Pagination {
 	switch query.(type) {
 	case *mgo.Query:
 		p.count, _ = query.(*mgo.Query).Count()
-	case []CollectTopic:
-		p.count = len(query.([]CollectTopic))
+	case []CollectAlbum:
+		p.count = len(query.([]CollectAlbum))
 	}
 	p.perPage = perPage
 	p.url = url

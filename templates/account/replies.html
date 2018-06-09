@@ -13,10 +13,10 @@
 	<div class="content">
 		<dl class="replies">
 		{{range .replies}}
-		    {{$topic := .Topic $.db}}
-		    {{$creater := $topic.Creater $.db}}
+		    {{$album := .Topic $.db}}
+		    {{$creater := $album.Creater $.db}}
 			<dd>
-				回复了 <a href="/user/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/p/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
+				回复了 <a href="/user/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/p/{{$album.Id_.Hex}}">{{$album.Title}}</a>
 				<span class="pull-right">{{formattime .CreatedAt}}</span>
 				<div>{{.Html}}</div>
 			</dd>

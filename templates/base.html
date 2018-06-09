@@ -19,19 +19,14 @@
 <body>
     <header>
         <div class="container">
-                <div class="bar">
-                    {{$ads := ads "top0" .db}}
-                        {{range $ads}}
-                        {{html .Code}}
-                    {{end}}
-                </div>
+
 				    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/">
+                <!--<a class="navbar-brand" href="/">
                     <img src="http://nosqldb.qiniudn.com/logo-sm.png" alt="logo"/>
-                </a>
+                </a>-->
 				        <div class="collapse navbar-collapse" id="navbarNav">
 				                <ul class="navbar-nav pull-left navbar-top" id="menu">
-                                    <li{{if eq .active "topic"}} class="nav-item active"{{end}} class="nav-item">
+                                    <li{{if eq .active "album"}} class="nav-item active"{{end}} class="nav-item">
                                        <a class="nav-link" href="/">首页</a>
                                     </li>
 				                </ul>
@@ -74,8 +69,7 @@
         </div>
     </header>
 
-    {{$ads := ads "top" .db}}
-    {{range $ads}}
+
     <div class="container" style="margin-bottom: 8px;">
       <div class="row">
         <div class="col-md-12">
@@ -83,7 +77,7 @@
         </div>
       </div>
     </div>
-    {{end}}
+
 
 
     <div class="container">
@@ -109,7 +103,7 @@
                     <li><a href="/timeline">时间线</a></li>
                 </ul>
             </p>
-            <p>&copy;2012-2018 nosqldb.org</p>
+            <p>&copy;2012-2018 xxx.com</p>
         </div>
     </footer>
     {{.analyticsCode}}

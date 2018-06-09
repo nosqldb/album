@@ -54,8 +54,8 @@
 <div class="content">
   <h4>{{$user.Username}}最近创建的主题</h4>
   <hr>
-  <dl class="topics">
-	{{range $user.LatestTopics .db}}
+  <dl class="albums">
+	{{range $user.LatestAlbums .db}}
 	{{$creater := .Creater $.db}}
 	{{$node := .Node $.db}}
 	<dd>
@@ -82,19 +82,19 @@
 	</dd>
 	{{end}}
   </dl>
-  {{if len ($user.LatestTopics .db)}}
-  <a href="/user/{{$user.Username}}/topics">{{$user.Username}} 创建的更多主题</a>
+  {{if len ($user.LatestAlbums .db)}}
+  <a href="/user/{{$user.Username}}/albums">{{$user.Username}} 创建的更多主题</a>
   {{end}}
 </div>
 <div class="content">
   <h4>{{$user.Username}}最近回复了</h4>
   <hr>
   {{range $user.LatestReplies .db}}
-  {{$topic := .Topic $.db}}
-  {{$creater := $topic.Creater $.db}}
+  {{$album := .Topic $.db}}
+  {{$creater := $album.Creater $.db}}
   <div class="reply">
 	<span>
-	  回复了 <a href="/user/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/p/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
+	  回复了 <a href="/user/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/p/{{$album.Id_.Hex}}">{{$album.Title}}</a>
 	  <span class="pull-right">{{formattime .CreatedAt}}</span>
 	</span>
 	<div>

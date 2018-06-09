@@ -9,7 +9,7 @@ import (
 
 func TestAt(t *testing.T) {
 	db, _ := mgo.Dial(Config.DB)
-	cu := db.DB("gopher").C(USERS)
+	cu := db.DB("gopher").C(USER)
 
 	defer func() {
 		cu.Remove(bson.M{"username": "testUser"})

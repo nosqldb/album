@@ -8,11 +8,11 @@
 		</tr>
 	</thead>
 	<tbody>
-	{{range .topics}}
+	{{range .albums}}
 		<tr>
 		  <td><a href="/p/{{.Id_.Hex}}" target="_blank">{{.Title}}</a></td>
 			<td>
-			  <a href="/admin/topic/{{.Id_.Hex}}/cancel/top" title="取消置顶" class="mini ui red icon button"><i class="remove icon"></i></a>
+			  <a href="/admin/album/{{.Id_.Hex}}/cancel/top" title="取消置顶" class="mini ui red icon button"><i class="remove icon"></i></a>
 			</td>
 		</tr>
 	{{end}}

@@ -11,19 +11,17 @@ import (
 	"time"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	. "github.com/nosqldb/G/crypto"
+	. "github.com/nosqldb/album/crypto"
 )
 
 const (
 	DefaultAvatar = "gopher_teal.jpg"
 
-	ADS                 = "ads"
-	COMMENTS            = "comments"
-	TOPICS              = "topics"
-	NODES               = "nodes"
-	LINKS               = "links"
+	COMMENT            = "comment"
+	ALBUM              = "album"
+	NODE               = "node"
 	STATUS              = "status"
-	USERS               = "users"
+	USER               = "user"
 	CODE                = "code"
 
 )
@@ -33,31 +31,31 @@ var colors = []string{"#FFCC66", "#66CCFF", "#6666FF", "#FF8000", "#0080FF", "#0
 //主题id和评论id，用于定位到专门的评论
 type At struct {
 	User      string
-	TopicId string
+	AlbumId string
 	CommentId string
 }
 
 //主题id和主题标题
 type Reply struct {
-	TopicId  string
-	TopicTitle string
+	AlbumId  string
+	AlbumTitle string
 }
 
 //收藏的话题
-type CollectTopic struct {
-	TopicId       string
+type CollectAlbum struct {
+	AlbumId       string
 	TimeCollected time.Time
 }
 
-func (ct *CollectTopic) Topic(db *mgo.Database) *Topic {
-	c := db.C(TOPICS)
-	var topic Topic
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(ct.TopicId)}).One(&topic)
+func (ct *CollectAlbum) Album(db *mgo.Database) *Album {
+	c := db.C(ALBUM)
+	var album Album
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(ct.AlbumId)}).One(&album)
 	if err != nil {
 		panic(err)
 		return nil
 	}
-	return &topic
+	return &album
 }
 
 // 用户
@@ -76,7 +74,7 @@ type User struct {
 	Fans            []string
 	RecentReplies   []Reply        //存储的是最近回复的主题的objectid.hex
 	RecentAts       []At           //存储的是最近评论被AT的主题的objectid.hex
-	TopicsCollected []CollectTopic //用户收藏的topic数组
+	AlbumsCollected []CollectAlbum //用户收藏的album数组
 	IsSuperuser     bool           // 是否是超级用户
 	IsActive        bool
 	ValidateCode    string
@@ -85,8 +83,8 @@ type User struct {
 }
 
 // 增加最近被@
-func (u *User) AtBy(c *mgo.Collection, username, TopicIdStr, commentIdStr string) error {
-	if username == "" || TopicIdStr == "" || commentIdStr == "" {
+func (u *User) AtBy(c *mgo.Collection, username, AlbumIdStr, commentIdStr string) error {
+	if username == "" || AlbumIdStr == "" || commentIdStr == "" {
 		return errors.New("string parameters can not be empty string")
 	}
 
@@ -99,7 +97,7 @@ func (u *User) AtBy(c *mgo.Collection, username, TopicIdStr, commentIdStr string
 		u = &user
 	}
 
-	u.RecentAts = append(u.RecentAts, At{username, TopicIdStr, commentIdStr})
+	u.RecentAts = append(u.RecentAts, At{username, AlbumIdStr, commentIdStr})
 	err := c.Update(bson.M{"username": u.Username}, bson.M{"$set": bson.M{"recentats": u.RecentAts}})
 	if err != nil {
 		return err
@@ -134,13 +132,13 @@ func (u *User) AvatarImgSrc(size int) string {
 }
 
 // 用户发表的最近10个主题
-func (u *User) LatestTopics(db *mgo.Database) *[]Topic {
-	c := db.C("topics")
-	var topics []Topic
+func (u *User) LatestAlbums(db *mgo.Database) *[]Album {
+	c := db.C("album")
+	var album []Album
 
-	c.Find(bson.M{"createdby": u.Id_}).Sort("-createdat").Limit(10).All(&topics)
+	c.Find(bson.M{"createdby": u.Id_}).Sort("-createdat").Limit(10).All(&album)
 
-	return &topics
+	return &album
 }
 
 // 用户的最近10个回复
@@ -192,14 +190,15 @@ type Node struct {
 	Id          string
 	Name        string
 	Description string
-	TopicCount  int
+	AlbumCount  int
 }
 
 // 主题
-type Topic struct {
+type Album struct {
 	Id_             bson.ObjectId `bson:"_id"`
 	NodeId          bson.ObjectId
 	Title        string
+	Photo        string
 	Markdown     string
 	Html         template.HTML
 	CommentCount int
@@ -213,8 +212,8 @@ type Topic struct {
 	IsTop           bool `bson:"is_top"` // 置顶
 }
 
-func (t *Topic) Creater(db *mgo.Database) *User {
-	t_ := db.C(USERS)
+func (t *Album) Creater(db *mgo.Database) *User {
+	t_ := db.C(USER)
 	user := User{}
 	t_.Find(bson.M{"_id": t.CreatedBy}).One(&user)
 
@@ -222,9 +221,9 @@ func (t *Topic) Creater(db *mgo.Database) *User {
 }
 
 // 是否有权编辑主题
-func (t *Topic) CanEdit(username string, db *mgo.Database) bool {
+func (t *Album) CanEdit(username string, db *mgo.Database) bool {
 	var user User
-	t_ := db.C(USERS)
+	t_ := db.C(USER)
 	err := t_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
@@ -237,7 +236,7 @@ func (t *Topic) CanEdit(username string, db *mgo.Database) bool {
 	return t.CreatedBy == user.Id_
 }
 
-func (t *Topic) CanDelete(username string, db *mgo.Database) bool {
+func (t *Album) CanDelete(username string, db *mgo.Database) bool {
 	var user User
 	t_ := db.C("users")
 	err := t_.Find(bson.M{"username": username}).One(&user)
@@ -248,28 +247,28 @@ func (t *Topic) CanDelete(username string, db *mgo.Database) bool {
 	return user.IsSuperuser
 }
 
-func (c *Topic) Updater(db *mgo.Database) *User {
+func (c *Album) Updater(db *mgo.Database) *User {
 	if c.UpdatedBy == "" {
 		return nil
 	}
 
-	t_ := db.C(USERS)
+	t_ := db.C(USER)
 	user := User{}
 	t_.Find(bson.M{"_id": bson.ObjectIdHex(c.UpdatedBy)}).One(&user)
 
 	return &user
 }
 
-func (t *Topic) Comments(db *mgo.Database) *[]Comment {
+func (t *Album) Comments(db *mgo.Database) *[]Comment {
 	t_ := db.C("comments")
 	var comments []Comment
 
-	t_.Find(bson.M{"topicid": t.Id_}).Sort("createdat").All(&comments)
+	t_.Find(bson.M{"albumid": t.Id_}).Sort("createdat").All(&comments)
 
 	return &comments
 }
 // 主题所属节点
-func (t *Topic) Node(db *mgo.Database) *Node {
+func (t *Album) Node(db *mgo.Database) *Node {
 	c := db.C("nodes")
 	node := Node{}
 	c.Find(bson.M{"_id": t.NodeId}).One(&node)
@@ -278,39 +277,39 @@ func (t *Topic) Node(db *mgo.Database) *Node {
 }
 
 // 只能收藏未收藏过的主题
-func (t *Topic) CanCollect(username string, db *mgo.Database) bool {
+func (t *Album) CanCollect(username string, db *mgo.Database) bool {
 	var user User
-	t_ := db.C(USERS)
+	t_ := db.C(USER)
 	err := t_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
 	has := false
-	for _, v := range user.TopicsCollected {
-		if v.TopicId == t.Id_.Hex() {
+	for _, v := range user.AlbumsCollected {
+		if v.AlbumId == t.Id_.Hex() {
 			has = true
 		}
 	}
 	return !has
 }
 // 主题链接
-func (t *Topic) Link(id bson.ObjectId) string {
+func (t *Album) Link(id bson.ObjectId) string {
 	return "http://nosqldb.org/p/" + id.Hex()
 
 }
 
 //格式化日期
-func (t *Topic) Format(tm time.Time) string {
+func (t *Album) Format(tm time.Time) string {
 	return tm.Format(time.RFC822)
 }
 
 // 主题的最近的一个回复
-func (t *Topic) LatestReplier(db *mgo.Database) *User {
+func (t *Album) LatestReplier(db *mgo.Database) *User {
 	if t.LatestReplierId == "" {
 		return nil
 	}
 
-	c := db.C("users")
+	c := db.C(USER)
 	user := User{}
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(t.LatestReplierId)}).One(&user)
@@ -326,7 +325,7 @@ func (t *Topic) LatestReplier(db *mgo.Database) *User {
 type Status struct {
 	Id_        bson.ObjectId `bson:"_id"`
 	UserCount  int
-	TopicCount int
+	AlbumCount int
 	ReplyCount int
 	UserIndex  int
 }
@@ -340,7 +339,7 @@ type SiteCategory struct {
 // 评论
 type Comment struct {
 	Id_       bson.ObjectId `bson:"_id"`
-	TopicId   bson.ObjectId
+	AlbumId   bson.ObjectId
 	Markdown  string
 	Html      template.HTML
 	CreatedBy bson.ObjectId
@@ -351,7 +350,7 @@ type Comment struct {
 
 // 评论人
 func (c *Comment) Creater(db *mgo.Database) *User {
-	c_ := db.C("users")
+	c_ := db.C(USER)
 	user := User{}
 	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
 
@@ -365,7 +364,7 @@ func (c *Comment) CanDeleteOrEdit(username string, db *mgo.Database) bool {
 	}
 
 	var user User
-	c_ := db.C("users")
+	c_ := db.C(USER)
 	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
@@ -374,28 +373,10 @@ func (c *Comment) CanDeleteOrEdit(username string, db *mgo.Database) bool {
 }
 
 // 主题
-func (c *Comment) Topic(db *mgo.Database) *Topic {
+func (c *Comment) Album(db *mgo.Database) *Album {
 	// 内容
-	var topic Topic
-	c_ := db.C("topics")
-	c_.Find(bson.M{"_id": c.TopicId}).One(&topic)
-	return &topic
-}
-
-type Link struct {
-	Id_         bson.ObjectId `bson:"_id"`
-	Name        string        `bson:"name"`
-	URL         string        `bson:"url"`
-	Description string        `bson:"description"`
-	Logo        string        `bson:"logo"`
-	IsOnHome    bool          `bson:"is_on_home"`   // 是否在首页右侧显示
-	IsOnBottom  bool          `bson:"is_on_bottom"` // 是否在底部显示
-}
-
-type AD struct {
-	Id_      bson.ObjectId `bson:"_id"`
-	Position string        `bson:"position"`
-	Name     string        `bson:"name"`
-	Code     string        `bson:"code"`
-	Index    int           `bons:"index"`
+	var album Album
+	c_ := db.C(ALBUM)
+	c_.Find(bson.M{"_id": c.AlbumId}).One(&album)
+	return &album
 }

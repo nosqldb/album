@@ -21,7 +21,7 @@
       </li>
       {{else}}
       <li class="nav-item">
-        <a class="nav-link" href="/topics/latest">最近发布</a>
+        <a class="nav-link" href="/albums/latest">最近发布</a>
       </li>
       {{end}}
       {{if eq .subActive "noReply"}}
@@ -30,14 +30,14 @@
       </li>
       {{else}}
       <li class="nav-item">
-        <a class="nav-link" href="/topics/no_reply">尚未回复</a>
+        <a class="nav-link" href="/albums/no_reply">尚未回复</a>
       </li> 
       {{end}}
     </ul>
   </div>
   <div class="clearfix"></div>
-  <dl class="topics">
-    {{range .topics}}
+  <dl class="albums">
+    {{range .albums}}
     {{$creater := .Creater $.db}}
     {{$node := .Node $.db}}
     <dd>
@@ -45,6 +45,8 @@
       <a class="label label-pill label-default pull-right" href="/p/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
       {{end}}
       <a href="/p/{{.Id_.Hex}}" class="title" style="margin-left:32px" >{{truncate .Title 80 "..."}}{{if .IsTop}} <span class="fa fa-thumb-tack"></span>{{end}}</a>
+	  <br>
+	  <a href="/p/{{.Id_.Hex}}" target="_blank"> <img src={{.Photo}} alt=""> </a>
       <div class="space"></div>
       <div class="info" style="margin-left:32px">
         <a class="label label-info" href="/node/{{$node.Id}}">{{$node.Name}}</a> •
@@ -112,18 +114,6 @@
    </div>
   </div>
 
-  <div class="card" >
-  {{$ads := ads "frontpage" .db}}
-  {{if $ads}}
-  <div class="card" id="ads">
-    <div class="card-text">
-      {{range $ads}}
-      {{html .Code}}
-      {{end}}
-    </div>
-  </div>
-  {{end}}  
-  </div>
   
 </div>
 {{end}}

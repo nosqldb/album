@@ -8,10 +8,8 @@ import (
 	"io/ioutil"
 	"strings"
 	"time"
-	"github.com/nosqldb/G/helpers"
+	"github.com/nosqldb/album/helpers"
 	"github.com/jimmykuu/wtforms"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
 const (
@@ -53,28 +51,7 @@ var funcMaps = template.FuncMap{
 		// 加载时间
 		return fmt.Sprintf("%dms", time.Now().Sub(startTime)/1000000)
 	},
-	"ads": func(position string, db *mgo.Database) []AD {
-		c := db.C(ADS)
-		var ads []AD
-		c.Find(bson.M{"position": position}).Sort("index").All(&ads)
 
-		count := len(ads)
-
-		if count <= 1 {
-			return ads
-		}
-
-		dayIndex := time.Now().YearDay() % count
-
-		var sortAds = make([]AD, count)
-		// 根据当天是一年的内第几天排序，每个广告都有机会排第一个
-
-		for i, ad := range ads {
-			sortAds[(i+count-dayIndex)%count] = ad
-		}
-
-		return sortAds
-	},
 	"url": func(url string) string {
 		// 没有http://或https://开头的增加http://
 		if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {

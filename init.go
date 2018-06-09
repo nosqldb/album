@@ -42,7 +42,7 @@ func init() {
 		c.Insert(&Status{
 			Id_:        bson.NewObjectId(),
 			UserCount:  0,
-			TopicCount: 0,
+			AlbumCount: 0,
 			ReplyCount: 0,
 			UserIndex:  0,
 		})
@@ -61,7 +61,7 @@ func init() {
 		fmt.Println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
 	}
 
-	c = db.C(USERS)
+	c = db.C(USER)
 	var users []User
 	c.Find(bson.M{"issuperuser": true}).All(&users)
 

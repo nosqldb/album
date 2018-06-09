@@ -15,7 +15,7 @@
 
 ##Install
 
-    $ go get github.com/nosqldb/G/server
+    $ go get github.com/nosqldb/album/server
 
 
 copy *etc/config.json.default* to  *etc/config.json* as the configure file
@@ -36,18 +36,5 @@ Windows:
 
 or:
 
-	$ go build -o G github.com/nosqldb/G/server
+	$ go build -o G github.com/nosqldb/album/server
 	$ ./G
-
-##Contributors
-
-- [Contributors](https://github.com/nosqldb/G/graphs/contributors)
-
-
-##License
-
-Copyright (c) 2012-2015
-
-Released under the MIT license:
-
-- [www.opensource.org/licenses/MIT](http://www.opensource.org/licenses/MIT)

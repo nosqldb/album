@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 	"net/http"
-	"github.com/nosqldb/G/helpers"
+	"github.com/nosqldb/album/helpers"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
-	. "github.com/nosqldb/G/crypto"
+	. "github.com/nosqldb/album/crypto"
 )
 
 // URL: /setting
@@ -79,7 +79,7 @@ func uploadAvatarHandler(handler *Handler) {
 
 	user, _ := currentUser(handler)
 	// 存储远程文件名
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
 	handler.redirect("/setting", http.StatusFound)
@@ -97,7 +97,7 @@ func chooseAvatarHandler(handler *Handler) {
 	avatar := handler.Request.FormValue("defaultAvatars")
 
 	if avatar != "" {
-		c := handler.DB.C(USERS)
+		c := handler.DB.C(USER)
 		c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": avatar}})
 	}
 
@@ -125,7 +125,7 @@ func setAvatarFromGravatar(handler *Handler) {
 		panic(err)
 	}
 
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
 	http.Redirect(handler.ResponseWriter, handler.Request, "/profile#avatar", http.StatusFound)
@@ -146,7 +146,7 @@ func editUserInfoHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if profileForm.Validate(handler.Request) {
-			c := handler.DB.C(USERS)
+			c := handler.DB.C(USER)
 
 			// 检查邮箱
 			result := new(User)
@@ -195,7 +195,7 @@ func changePasswordHandler(handler *Handler) {
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		if form.Value("new_password") == form.Value("confirm_password") {
 			if user.CheckPassword(form.Value("current_password")) {
-				c := handler.DB.C(USERS)
+				c := handler.DB.C(USER)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
 					"password": GenPwd(form.Value("new_password")),
 				}})

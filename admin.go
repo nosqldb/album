@@ -16,7 +16,7 @@ func adminHandler(handler *Handler) {
 	now := time.Now()
 	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 	today = today.Add(-time.Duration(Config.TimeZoneOffset) * time.Hour)
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 
 	newUserCount, err := c.Find(bson.M{"joinedat": bson.M{"$gt": today}}).Count()
 	if err != nil {
@@ -28,13 +28,13 @@ func adminHandler(handler *Handler) {
 		panic(err)
 	}
 
-	c = handler.DB.C(TOPICS)
-	newTopicCount, err := c.Find(bson.M{"createdat": bson.M{"$gt": today}}).Count()
+	c = handler.DB.C(ALBUM)
+	newAlbumCount, err := c.Find(bson.M{"createdat": bson.M{"$gt": today}}).Count()
 	if err != nil {
 		panic(err)
 	}
 
-	c = handler.DB.C(COMMENTS)
+	c = handler.DB.C(COMMENT)
 	newCommentCount, err := c.Find(bson.M{"createdat": bson.M{"$gt": today}}).Count()
 	if err != nil {
 		panic(err)
@@ -42,7 +42,7 @@ func adminHandler(handler *Handler) {
 
 	handler.renderTemplate("admin/index.html", ADMIN, map[string]interface{}{
 		"newUserCount":    newUserCount,
-		"newTopicCount":   newTopicCount,
+		"newAlbumCount":   newAlbumCount,
 		"newCommentCount": newCommentCount,
 		"totalUserCount":  totalUserCount,
 	})
@@ -59,7 +59,7 @@ func adminListUsersHandler(handler *Handler) {
 	}
 
 	var users []User
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 
 	pagination := NewPagination(c.Find(nil).Sort("-joinedat"), "/admin/users", PerPage)
 
@@ -85,7 +85,7 @@ func adminListUsersHandler(handler *Handler) {
 func adminActivateUserHandler(handler *Handler) {
 	userId := mux.Vars(handler.Request)["userId"]
 
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	c.Update(bson.M{"_id": bson.ObjectIdHex(userId)}, bson.M{"$set": bson.M{"isactive": true}})
 	http.Redirect(handler.ResponseWriter, handler.Request, "/admin/users", http.StatusFound)
 }

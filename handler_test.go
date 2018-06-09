@@ -21,7 +21,7 @@ func TestParam(t *testing.T) {
 			ResponseWriter: res,
 			Request:        req,
 		}
-		id := handler.param("topicId")
+		id := handler.param("albumId")
 		if id != testId {
 			t.Fatal("Handler.param failed,want 'id' but get '" + id + "'")
 		}

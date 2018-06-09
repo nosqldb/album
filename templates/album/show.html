@@ -1,8 +1,8 @@
-{{define "Title"}}{{.topic.Title}}{{end}}
+{{define "Title"}}{{.album.Title}}{{end}}
 {{define "ContentWidth"}}10{{end}}
 {{define "Breadcrumb"}}
-{{$topic := .utils.AssertTopic .topic}}
-{{$node := $topic.Node .db}}
+{{$album := .utils.AssertAlbum .album}}
+{{$node := $album.Node .db}}
 <nav aria-label="breadcrumb" role="navigation">
 <ul class="breadcrumb">
   <li class="breadcrumb-item"><a href="/"><i class="fa fa-home"></i> 首页</a></li>
@@ -11,54 +11,54 @@
 </nav>
 {{end}}
 {{define "Content"}}
-{{$topic := .utils.AssertTopic .topic}}
-{{$creater := $topic.Creater .db}}
+{{$album := .utils.AssertAlbum .album}}
+{{$creater := $album.Creater .db}}
 <div class="content">
   <div class="page-header">
-  	<h1>{{$topic.Title}}</h1>
+  	<h1>{{$album.Title}}</h1>
     <div class="btn-group btn-group-sm pull-right">
   	  {{if .username}}
           {{if .curr_user.IsSuperuser}}
-  	      {{if $topic.IsTop}}
-  	        <a href="/admin/topic/{{$topic.Id_.Hex}}/cancel/top" class="btn btn-success" title="取消置顶"><i class="fa fa-thumb-tack"></i></a>
+  	      {{if $album.IsTop}}
+  	        <a href="/admin/album/{{$album.Id_.Hex}}/cancel/top" class="btn btn-success" title="取消置顶"><i class="fa fa-thumb-tack"></i></a>
   	      {{else}}
-              <a href="/admin/topic/{{$topic.Id_.Hex}}/set/top" class="btn btn-default" title="置顶"><i class="fa fa-thumb-tack"></i></a>
+              <a href="/admin/album/{{$album.Id_.Hex}}/set/top" class="btn btn-default" title="置顶"><i class="fa fa-thumb-tack"></i></a>
   	      {{end}}
   	    {{end}}
-  	    {{if $topic.CanEdit .username $.db}}
-            <a href="/p/{{$topic.Id_.Hex}}/edit" class="btn btn-default" title="编辑"><i class="fa fa-edit"></i></a>
+  	    {{if $album.CanEdit .username $.db}}
+            <a href="/p/{{$album.Id_.Hex}}/edit" class="btn btn-default" title="编辑"><i class="fa fa-edit"></i></a>
   	    {{end}}
-  	    {{if $topic.CanDelete .username $.db}}
-  	    <a href="/p/{{$topic.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="fa fa-times"></i></a>
+  	    {{if $album.CanDelete .username $.db}}
+  	    <a href="/p/{{$album.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="fa fa-times"></i></a>
   	    {{end}}
   	    {{if ne .username $creater.Username}}
-  	      {{if $topic.CanCollect .username $.db}}
-  	        <a href="/p/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="fa fa-star-o"></i></a>
+  	      {{if $album.CanCollect .username $.db}}
+  	        <a href="/p/{{$album.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="fa fa-star-o"></i></a>
   	      {{end}}
   	    {{end}}
   	  {{end}}
   	</div>
 	  <div>
-	    由 <a href="/user/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{formattime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
+	    由 <a href="/user/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{formattime $album.CreatedAt }} 发布 {{$album.Hits}} 次点击
 	  </div>
     <div class="clearfix"></div>
   </div>
   <div class="body editormd-preview-container">
-    {{$topic.Html}}
-    {{$updater := $topic.Updater .db}}
+    {{$album.Html}}
+    {{$updater := $album.Updater .db}}
     {{if $updater}}
     <hr>
     <div class="alert alert-success">
-      {{$updater.Username}} 于 {{formattime $topic.UpdatedAt }} 修改
+      {{$updater.Username}} 于 {{formattime $album.UpdatedAt }} 修改
     </div>
     {{end}}
   </div>
 </div>
 <div id="replies" class="content">
-  <span>{{$topic.CommentCount}} 回复</span>
+  <span>{{$album.CommentCount}} 回复</span>
   <hr>
   <dl class="replies editormd-preview-container">
-	{{range $index, $reply := $topic.Comments .db}}
+	{{range $index, $reply := $album.Comments .db}}
 	{{$commenter := .Creater $.db}}
 	<dd id="{{.Id_.Hex}}">
       <a href="/user/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;">
@@ -86,7 +86,7 @@
 </div>
 {{if .username}}
 <div id="reply">
-  <form action="/comment/{{$topic.Id_.Hex}}" method="post" class="form-vertical" id="reply-form" role="form">
+  <form action="/comment/{{$album.Id_.Hex}}" method="post" class="form-vertical" id="reply-form" role="form">
 	<fieldset>
 	  <div class="form-group">
 		<label>新回复</label>

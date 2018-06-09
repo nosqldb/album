@@ -86,19 +86,19 @@ dl.site dt {
 	-khtml-border-radius: 4px;
 }
 
-dl.topics dd, dl.replies dd, dl#nodes dd {
+dl.albums dd, dl.replies dd, dl#nodes dd {
 	margin-left: 0;
 	padding-top: 20px;
 	padding-bottom: 20px;
 	border-bottom: 1px dashed #CCC;
 }
 
-.topic, .reply {
+.album, .reply {
 	border-bottom: 1px dashed #CCC;
 	padding: 12px 0;
 }
 
-dl.topics .title {
+dl.albums .title {
 	font-size: 18px;
     font-weight: bold;
     line-height: 1.5;

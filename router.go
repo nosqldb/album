@@ -55,7 +55,6 @@ var routes = []Route{
 	{"/about", Everyone, staticHandler("about.html")},
 	{"/faq", Everyone, staticHandler("faq.html")},
 	{"/timeline", Everyone, staticHandler("timeline.html")},
-	{"/link", Everyone, linksHandler},
 	{"/search", Everyone, searchHandler},
 	{"/users.json", Everyone, usersJsonHandler},
 
@@ -64,17 +63,10 @@ var routes = []Route{
 	{"/admin/node/new", Administrator, adminNewNodeHandler},
 	{"/admin/users", Administrator, adminListUsersHandler},
 	{"/admin/user/{userId}/activate", Administrator, adminActivateUserHandler},
-	{"/admin/links", Administrator, adminListLinksHandler},
-	{"/admin/link/new", Administrator, adminNewLinkHandler},
-	{"/admin/link/{linkId}/edit", Administrator, adminEditLinkHandler},
-	{"/admin/link/{linkId}/delete", Administrator, adminDeleteLinkHandler},
-	{"/admin/ads", Administrator, adminListAdsHandler},
-	{"/admin/ad/new", Administrator, adminNewAdHandler},
-	{"/admin/ad/{id:[0-9a-f]{24}}/delete", Administrator, adminDeleteAdHandler},
-	{"/admin/ad/{id:[0-9a-f]{24}}/edit", Administrator, adminEditAdHandler},
-	{"/admin/top/topics", Administrator, listTopTopicsHandler},
-	{"/admin/topic/{id:[0-9a-f]{24}}/cancel/top", Administrator, cancelTopTopicHandler},
-	{"/admin/topic/{id:[0-9a-f]{24}}/set/top", Administrator, setTopTopicHandler},
+
+	{"/admin/top/albums", Administrator, listTopAlbumsHandler},
+	{"/admin/album/{id:[0-9a-f]{24}}/cancel/top", Administrator, cancelTopAlbumHandler},
+	{"/admin/album/{id:[0-9a-f]{24}}/set/top", Administrator, setTopAlbumHandler},
 
 	{"/signup", Everyone, signupHandler},
 	{"/signin", Everyone, signinHandler},
@@ -92,27 +84,27 @@ var routes = []Route{
 	{"/setting/change_password", Authenticated, changePasswordHandler},
 
 	{"/nodes", Everyone, nodesHandler},
-	{"/node/{node}", Everyone, topicInNodeHandler},
+	{"/node/{node}", Everyone, albumInNodeHandler},
 
-	{"/comment/{topicId:[0-9a-f]{24}}", Authenticated, commentHandler},
+	{"/comment/{albumId:[0-9a-f]{24}}", Authenticated, commentHandler},
 	{"/comment/{commentId:[0-9a-f]{24}}/delete", Administrator, deleteCommentHandler},
 	{"/comment/{id:[0-9a-f]{24}}.json", Authenticated, commentJsonHandler},
 	{"/comment/{id:[0-9a-f]{24}}/edit", Authenticated, editCommentHandler},
 
-	{"/topics/latest", Everyone, latestTopicsHandler},
-	{"/topics/no_reply", Everyone, noReplyTopicsHandler},
-	{"/p", Authenticated, newTopicHandler},
-	{"/p/{topicId:[0-9a-f]{24}}", Everyone, showTopicHandler},
-	{"/p/{topicId:[0-9a-f]{24}}/edit", Authenticated, editTopicHandler},
-	{"/p/{topicId:[0-9a-f]{24}}/collect", Authenticated, collectTopicHandler},
-	{"/p/{topicId:[0-9a-f]{24}}/delete", Administrator, deleteTopicHandler},
+	{"/albums/latest", Everyone, latestAlbumsHandler},
+	{"/albums/no_reply", Everyone, noReplyAlbumsHandler},
+	{"/p", Authenticated, newAlbumHandler},
+	{"/p/{albumId:[0-9a-f]{24}}", Everyone, showAlbumHandler},
+	{"/p/{albumId:[0-9a-f]{24}}/edit", Authenticated, editAlbumHandler},
+	{"/p/{albumId:[0-9a-f]{24}}/collect", Authenticated, collectAlbumHandler},
+	{"/p/{albumId:[0-9a-f]{24}}/delete", Administrator, deleteAlbumHandler},
 
 	{"/user/{username}", Everyone, userInfoHandler},
-	{"/user/{username}/topics", Everyone, userTopicsHandler},
+	{"/user/{username}/albums", Everyone, userAlbumsHandler},
 	{"/user/{username}/replies", Everyone, userRepliesHandler},
 	{"/user/{username}/news", Everyone, userNewsHandler},
 	{"/user/{username}/clear/{t}", Authenticated, userNewsClear},
-	{"/user/{username}/collect", Everyone, userTopicsCollectedHandler},
+	{"/user/{username}/collect", Everyone, userAlbumsCollectedHandler},
 	{"/follow/{username}", Authenticated, followHandler},
 	{"/unfollow/{username}", Authenticated, unfollowHandler},
 	{"/users", Everyone, usersHandler},
@@ -120,5 +112,6 @@ var routes = []Route{
 
 	{"/upload/image", Authenticated, uploadImageHandler},
 
-	//{"/api/v1/topics", Everyone, apiTopicsHandler},
+	
+	//{"/api/v1/albums", Everyone, apiAlbumsHandler},
 }

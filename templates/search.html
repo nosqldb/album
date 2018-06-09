@@ -19,8 +19,8 @@
 	</div>
   </form>
 
-  <dl class="topics">
-	{{range .topics}}
+  <dl class="albums">
+	{{range .albums}}
 	{{$creater := .Creater $.db}}
     {{$node := .Node $.db}}
 	{{$latestReplier := .LatestReplier $.db}}

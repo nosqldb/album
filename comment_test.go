@@ -59,7 +59,7 @@ func TestCommentAt(t *testing.T) {
 	//插入一条主题,一个回复.
 	//和两个用户.
 
-	topicId := bson.NewObjectId()
+	albumId := bson.NewObjectId()
 	contentId := bson.NewObjectId()
 	nodeId := bson.NewObjectId()
 	userId := bson.NewObjectId()
@@ -67,23 +67,23 @@ func TestCommentAt(t *testing.T) {
 
 	//　插入主题
 	contentsC := db.DB("gopher").C(CONTENTS)
-	contentsC.Insert(&Topic{
+	contentsC.Insert(&Album{
 		Content: Content{
 			Id_:       contentId,
 			CreatedBy: userId,
-			Type:      TypeTopic,
+			Type:      TypeAlbum,
 		},
-		Id_:             topicId,
+		Id_:             albumId,
 		NodeId:          nodeId,
 		LatestRepliedAt: time.Now(),
 	},
 	)
 	defer func() {
-		contentsC.Remove(bson.M{"_id": topicId})
+		contentsC.Remove(bson.M{"_id": albumId})
 	}()
 
 	//  插入用户
-	usersC := db.DB("gopher").C(USERS)
+	usersC := db.DB("gopher").C(USER)
 	usersC.Insert(bson.M{"_id": userId, "username": "user"})
 	usersC.Insert(bson.M{"_id": commenterId, "username": "commenter"})
 	usersC.Insert(bson.M{"username": "3rd_user"})
@@ -94,7 +94,7 @@ func TestCommentAt(t *testing.T) {
 	}()
 	form := Url.Values{}
 	form.Add("content", "@3rd_user comments")
-	req, err := Post(Config.Host+"/comment/"+topicId.Hex(), form)
+	req, err := Post(Config.Host+"/comment/"+albumId.Hex(), form)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -105,7 +105,7 @@ func TestCommentAt(t *testing.T) {
 	r.ServeHTTP(res, req)
 
 	defer func() {
-		c := db.DB("gopher").C(COMMENTS)
+		c := db.DB("gopher").C(COMMENT)
 		c.Remove(bson.M{"createdby": commenterId})
 	}()
 

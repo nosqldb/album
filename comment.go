@@ -9,7 +9,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// URL: /comment/{topicId}
+// URL: /comment/{albumId}
 // 评论，不同内容共用一个评论方法
 func commentHandler(handler *Handler) {
 	if handler.Request.Method != "POST" {
@@ -17,19 +17,19 @@ func commentHandler(handler *Handler) {
 	}
 
 	user, _ := currentUser(handler)
-	topicIdStr := handler.param("topicId")
-	topicId := bson.ObjectIdHex(topicIdStr)
+	albumIdStr := handler.param("albumId")
+	albumId := bson.ObjectIdHex(albumIdStr)
 
 	var temp map[string]interface{}
-	c := handler.DB.C(TOPICS)
-	c.Find(bson.M{"_id": topicId}).One(&temp)
+	c := handler.DB.C(ALBUM)
+	c.Find(bson.M{"_id": albumId}).One(&temp)
 
 	var contentCreator bson.ObjectId
 	contentCreator = temp["createdby"].(bson.ObjectId)
 
-	url := "/p/" + topicIdStr
+	url := "/p/" + albumIdStr
 
-	c.Update(bson.M{"_id": topicId}, bson.M{"$inc": bson.M{"commentcount": 1}})
+	c.Update(bson.M{"_id": albumId}, bson.M{"$inc": bson.M{"commentcount": 1}})
 
 	markdown := handler.Request.FormValue("editormd-markdown-doc")
 	html := handler.Request.FormValue("editormd-html-code")
@@ -37,10 +37,10 @@ func commentHandler(handler *Handler) {
 	Id_ := bson.NewObjectId()
 	now := time.Now()
 
-	c = handler.DB.C(COMMENTS)
+	c = handler.DB.C(COMMENT)
 	c.Insert(&Comment{
 		Id_:       Id_,
-		TopicId:   topicId,
+		AlbumId:   albumId,
 		Markdown:  markdown,
 		Html:      template.HTML(html),
 		CreatedBy: user.Id_,
@@ -48,14 +48,14 @@ func commentHandler(handler *Handler) {
 	})
 	
 	// 修改最后回复用户Id和时间
-	c = handler.DB.C(TOPICS)
-	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
+	c = handler.DB.C(ALBUM)
+	c.Update(bson.M{"_id": albumId}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
 
 	// 修改中的回复数量
 	c = handler.DB.C(STATUS)
 	c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
 	// 修改对应用户的最近at.
-	c = handler.DB.C(USERS)
+	c = handler.DB.C(USER)
 	usernames := findAts(markdown)
 	for _, name := range usernames {
 		u, err := getUserByName(c, name)
@@ -64,7 +64,7 @@ func commentHandler(handler *Handler) {
 			continue
 		}
 		if user.Username != u.Username {
-			u.AtBy(c, user.Username, topicIdStr, Id_.Hex())
+			u.AtBy(c, user.Username, albumIdStr, Id_.Hex())
 		}
 	}
 
@@ -85,13 +85,13 @@ func commentHandler(handler *Handler) {
 		//添加最近评论所在的主题id
 		duplicate := false
 		for _, v := range recentreplies {
-			if topicIdStr == v.TopicId {
+			if albumIdStr == v.AlbumId {
 				duplicate = true
 			}
 		}
 		//如果回复的主题有最近回复的话就不添加进去，因为在同一主题下就能看到
 		if !duplicate {
-			recentreplies = append(recentreplies, Reply{topicIdStr, tempTitle})
+			recentreplies = append(recentreplies, Reply{albumIdStr, tempTitle})
 
 			if err = c.Update(bson.M{"_id": contentCreator}, bson.M{"$set": bson.M{"recentreplies": recentreplies}}); err != nil {
 				fmt.Println(err)
@@ -113,7 +113,7 @@ func deleteCommentHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	var commentId string = vars["commentId"]
 
-	c := handler.DB.C(COMMENTS)
+	c := handler.DB.C(COMMENT)
 	var comment Comment
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(commentId)}).One(&comment)
 
@@ -124,23 +124,23 @@ func deleteCommentHandler(handler *Handler) {
 
 	c.Remove(bson.M{"_id": comment.Id_})
 
-	c = handler.DB.C(TOPICS)
-	c.Update(bson.M{"_id": comment.TopicId}, bson.M{"$inc": bson.M{"commentcount": -1}})
+	c = handler.DB.C(ALBUM)
+	c.Update(bson.M{"_id": comment.AlbumId}, bson.M{"$inc": bson.M{"commentcount": -1}})
 	
-	var topic Topic
-	c.Find(bson.M{"_id": comment.TopicId}).One(&topic)
-	if topic.LatestReplierId == comment.CreatedBy.Hex() {
-		if topic.CommentCount == 0 {
+	var album Album
+	c.Find(bson.M{"_id": comment.AlbumId}).One(&album)
+	if album.LatestReplierId == comment.CreatedBy.Hex() {
+		if album.CommentCount == 0 {
 			// 如果删除后没有回复，设置最后回复id为空，最后回复时间为创建时间
-			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": "", "latestrepliedat": topic.CreatedAt}})
+			c.Update(bson.M{"_id": album.Id_}, bson.M{"$set": bson.M{"latestreplierid": "", "latestrepliedat": album.CreatedAt}})
 		} else {
 			// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
 			var latestComment Comment
-			c = handler.DB.C("comments")
-			c.Find(bson.M{"topicid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
+			c = handler.DB.C(COMMENT)
+			c.Find(bson.M{"albumid": album.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
 
-			c = handler.DB.C(TOPICS)
-			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
+			c = handler.DB.C(ALBUM)
+			c.Update(bson.M{"_id": album.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
 		}
 	}
 
@@ -148,7 +148,7 @@ func deleteCommentHandler(handler *Handler) {
 	c = handler.DB.C(STATUS)
 	c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
 	
-    url := "/p/" + comment.TopicId.Hex()
+    url := "/p/" + comment.AlbumId.Hex()
 	
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }
@@ -159,7 +159,7 @@ func commentJsonHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	var id string = vars["id"]
 
-	c := handler.DB.C(COMMENTS)
+	c := handler.DB.C(COMMENT)
 	var comment Comment
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&comment)
 
@@ -183,7 +183,7 @@ func editCommentHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	var id string = vars["id"]
 
-	c := handler.DB.C(COMMENTS)
+	c := handler.DB.C(COMMENT)
 
 	user, _ := currentUser(handler)
 
@@ -206,10 +206,10 @@ func editCommentHandler(handler *Handler) {
 	}})
 
 	var temp map[string]interface{}
-	c = handler.DB.C(TOPICS)
-	c.Find(bson.M{"_id": comment.TopicId}).One(&temp)
+	c = handler.DB.C(ALBUM)
+	c.Find(bson.M{"_id": comment.AlbumId}).One(&temp)
 
-	url := "/p/" + comment.TopicId.Hex()
+	url := "/p/" + comment.AlbumId.Hex()
 
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }

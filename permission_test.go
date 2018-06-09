@@ -25,7 +25,7 @@ func getRoute() *mux.Router {
 func TestPermission(t *testing.T) {
 	db, _ := mgo.Dial(Config.DB)
 	defer func() {
-		db.DB("gopher").C(USERS).Remove(bson.M{"username": "没有中文名"})
+		db.DB("gopher").C(USER).Remove(bson.M{"username": "没有中文名"})
 	}()
 	r := getRoute()
 	res := httptest.NewRecorder()
@@ -42,7 +42,7 @@ func TestPermission(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	db.DB("gopher").C(USERS).Insert(bson.M{"username": "没有中文名"})
+	db.DB("gopher").C(USER).Insert(bson.M{"username": "没有中文名"})
 	session, _ := store.Get(req, "user")
 	session.Values["username"] = "没有中文名"
 	res = httptest.NewRecorder()

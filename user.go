@@ -30,7 +30,7 @@ func returnJson(w http.ResponseWriter, input interface{}) {
 // 显示最新加入的会员
 // URL: /users
 func usersHandler(handler *Handler) {
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	var newestUsers []User
 	c.Find(nil).Sort("-joinedat").Limit(40).All(&newestUsers)
 
@@ -53,7 +53,7 @@ func allUsersHandler(handler *Handler) {
 		return
 	}
 
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 
 	pagination := NewPagination(c.Find(nil).Sort("joinedat"), "/users/all", 40)
 
@@ -80,7 +80,7 @@ func allUsersHandler(handler *Handler) {
 func userInfoHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 
 	user := User{}
 
@@ -98,21 +98,21 @@ func userInfoHandler(handler *Handler) {
 }
 
 // URL: /user/{username}/collect/
-// 用户收集的topic
-func userTopicsCollectedHandler(handler *Handler) {
+// 用户收集的album
+func userAlbumsCollectedHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
 	}
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	user := User{}
 	err = c.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		message(handler, "会员未找到", "会员未找到", "error")
 	}
-	pagination := NewPagination(user.TopicsCollected, "/user/"+username+"/collect", 3)
+	pagination := NewPagination(user.AlbumsCollected, "/user/"+username+"/collect", 3)
 	collects, err := pagination.Page(page)
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
@@ -126,9 +126,9 @@ func userTopicsCollectedHandler(handler *Handler) {
 	})
 }
 
-// URL: /user/{username}/topics
+// URL: /user/{username}/albums
 // 用户发表的所有主题
-func userTopicsHandler(handler *Handler) {
+func userAlbumsHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -138,7 +138,7 @@ func userTopicsHandler(handler *Handler) {
 
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 
 	user := User{}
 	err = c.Find(bson.M{"username": username}).One(&user)
@@ -148,11 +148,11 @@ func userTopicsHandler(handler *Handler) {
 		return
 	}
 
-	c = handler.DB.C(TOPICS)
+	c = handler.DB.C(ALBUM)
 
-	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_}).Sort("-latestrepliedat"), "/user/"+username+"/topics", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_}).Sort("-latestrepliedat"), "/user/"+username+"/albums", PerPage)
 
-	var topics []Topic
+	var albums []Album
 
 	query, err := pagination.Page(page)
 
@@ -161,11 +161,11 @@ func userTopicsHandler(handler *Handler) {
 		return
 	}
 
-	query.(*mgo.Query).All(&topics)
+	query.(*mgo.Query).All(&albums)
 
-	handler.renderTemplate("account/topics.html", BASE, map[string]interface{}{
+	handler.renderTemplate("account/albums.html", BASE, map[string]interface{}{
 		"user":       user,
-		"topics":     topics,
+		"albums":     albums,
 		"pagination": pagination,
 		"page":       page,
 		"active":     "users",
@@ -184,7 +184,7 @@ func userRepliesHandler(handler *Handler) {
 
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 
 	user := User{}
 	err = c.Find(bson.M{"username": username}).One(&user)
@@ -201,7 +201,7 @@ func userRepliesHandler(handler *Handler) {
 
 	var replies []Comment
 
-	c = handler.DB.C(COMMENTS)
+	c = handler.DB.C(COMMENT)
 
 	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_}).Sort("-createdat"), "/user/"+username+"/replies", PerPage)
 
@@ -228,7 +228,7 @@ func userNewsClear(handler *Handler) {
 	if ok {
 		if user.Username == username {
 			var user User
-			c := handler.DB.C(USERS)
+			c := handler.DB.C(USER)
 			c.Find(bson.M{"username": username}).One(&user)
 			if t == at {
 				user.RecentAts = user.RecentAts[:0]
@@ -264,7 +264,7 @@ func userNewsHandler(handler *Handler) {
 
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	user := User{}
 	err = c.Find(bson.M{"username": username}).One(&user)
 	if err != nil {

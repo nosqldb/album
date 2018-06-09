@@ -11,8 +11,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	. "github.com/nosqldb/G/crypto"
-	"github.com/nosqldb/G/email"
+	. "github.com/nosqldb/album/crypto"
+	"github.com/nosqldb/album/email"
 	"github.com/pborman/uuid"
 	"github.com/dchest/captcha"
 	"github.com/gorilla/mux"
@@ -39,7 +39,7 @@ var defaultAvatars = []string{
 // 生成users.json字符串
 func generateUsersJson(db *mgo.Database) {
 	var users []User
-	c := db.C(USERS)
+	c := db.C(USER)
 	err := c.Find(nil).All(&users)
 	if err != nil {
 		panic(err)
@@ -72,7 +72,7 @@ func currentUser(handler *Handler) (*User, bool) {
 
 	user := User{}
 
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 
 	// 检查用户名
 	err := c.Find(bson.M{"username": username}).One(&user)
@@ -98,7 +98,7 @@ func signupHandler(handler *Handler) {
 	var email string
 
 	form := wtforms.NewForm(
-		wtforms.NewTextField("username", "用户名", username, wtforms.Required{}, wtforms.Regexp{Expr: `^[a-zA-Z0-9_]{3,16}$`, Message: "请使用a-z, A-Z, 0-9以及下划线, 长度3-16之间"}),
+		wtforms.NewTextField("username", "用户名", username, wtforms.Required{}, wtforms.Regexp{Expr: `^[a-zA-Z0-9_\p{Han}]{3,16}$`, Message: "请使用a-z, A-Z, 0-9以及下划线或中文, 长度3-16之间"}),
 		wtforms.NewPasswordField("password", "密码", wtforms.Required{}),
 		wtforms.NewTextField("email", "电子邮件", email, wtforms.Required{}, wtforms.Email{}),
 		wtforms.NewTextField("captcha", "验证码", "", wtforms.Required{}),
@@ -117,7 +117,7 @@ func signupHandler(handler *Handler) {
 				return
 			}
 
-			c := handler.DB.C(USERS)
+			c := handler.DB.C(USER)
 
 			result := User{}
 
@@ -195,7 +195,7 @@ func activateHandler(handler *Handler) {
 
 	var user User
 
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 
 	err := c.Find(bson.M{"validatecode": code}).One(&user)
 
@@ -244,7 +244,7 @@ func signinHandler(handler *Handler) {
 				return
 			}
 
-			c := handler.DB.C(USERS)
+			c := handler.DB.C(USER)
 			user := User{}
 
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
@@ -313,7 +313,7 @@ func followHandler(handler *Handler) {
 	}
 
 	user := User{}
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -344,7 +344,7 @@ func unfollowHandler(handler *Handler) {
 	}
 
 	user := User{}
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -374,7 +374,7 @@ func forgotPasswordHandler(handler *Handler) {
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
 			var user User
-			c := handler.DB.C(USERS)
+			c := handler.DB.C(USER)
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
 			if err != nil {
 				form.AddError("username", "没有该用户")
@@ -421,7 +421,7 @@ func resetPasswordHandler(handler *Handler) {
 	code := vars["code"]
 
 	var user User
-	c := handler.DB.C(USERS)
+	c := handler.DB.C(USER)
 	err := c.Find(bson.M{"resetcode": code}).One(&user)
 
 	if err != nil {
